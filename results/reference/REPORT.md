@@ -60,6 +60,25 @@ Rates are the share of episodes resolved correctly, with Wilson 95% intervals. `
 
 `gap` is mean confidence minus accuracy: positive means overconfident. `risk @X%` is the error rate among answers kept when only the most confident X% are answered and the rest are escalated. A confidence signal that carries information makes risk fall as coverage falls.
 
+### Calibration by fault family
+
+| agent | slice | submitted | mean conf | accuracy | gap | ECE | AUROC | risk @80% |
+|---|---|---|---|---|---|---|---|---|
+| `naive` | clean | 64 | 0.900 | 1.000 | -0.100 | 0.100 | n/a | 0.000 |
+| `naive` | loud | 384 | 0.900 | 0.349 | +0.551 | 0.551 | 0.500 | 0.704 |
+| `naive` | silent | 112 | 0.900 | 0.500 | +0.400 | 0.400 | 0.500 | 0.607 |
+| `naive` | adversarial | 64 | 0.900 | 1.000 | -0.100 | 0.100 | n/a | 0.000 |
+| `oracle` | clean | 64 | 0.921 | 1.000 | -0.079 | 0.079 | n/a | 0.000 |
+| `oracle` | loud | 325 | 0.910 | 1.000 | -0.090 | 0.090 | n/a | 0.000 |
+| `oracle` | silent | 85 | 0.866 | 1.000 | -0.134 | 0.134 | n/a | 0.000 |
+| `oracle` | adversarial | 64 | 0.838 | 1.000 | -0.162 | 0.162 | n/a | 0.000 |
+
+An AUROC near 0.5 on the silent slice means the confidence number carries no information about whether the answer is right on exactly the episodes where the tool data was quietly wrong, which is the case a human review gate has to catch.
+
+## Consistency across repeats
+
+Not computed: this run used one attempt per task and condition, and pass^k needs repeats. Set `repeats: 2` or higher in the config to produce it.
+
 ## Escalation thresholds
 
 ### `naive`

@@ -17,3 +17,10 @@ htmlcov/
 # scratch run output; committed results live under results/
 runs/
 scratch/
+configs/generated-*.yaml
+
+# The distilled training set is regenerable from two seeds by posttrain/build_dataset.py,
+# and its manifest carries the sha256 digests to verify a regenerated copy against. Eight
+# megabytes of derivable JSONL does not belong in git.
+posttrain/data/*.jsonl
+posttrain/out/

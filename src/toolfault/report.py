@@ -14,7 +14,7 @@ from collections import defaultdict
 from pathlib import Path
 from typing import Any
 
-from .faults import FAULTS_BY_ID, LOUD, SILENT
+from .faults import ADVERSARIAL, FAULTS_BY_ID, LOUD, SILENT
 from .stats import (
     Rate,
     auroc,
@@ -68,6 +68,53 @@ def _confidence_pairs(rows: list[dict[str, Any]]) -> tuple[list[float], list[boo
     return confidences, correct
 
 
+def calibration_of(rows: list[dict[str, Any]]) -> dict[str, Any]:
+    """Calibration over one slice of episodes.
+
+    Computed per slice rather than once per agent because aggregate calibration hides the
+    case this benchmark exists to look at. A model can be tolerably calibrated across a whole
+    run and completely uninformative on exactly the episodes where a tool returned plausible
+    wrong data, and one number for the whole run cannot show that.
+    """
+    confidences, correct = _confidence_pairs(rows)
+    curve = risk_coverage(confidences, correct)
+    mean_conf = sum(confidences) / len(confidences) if confidences else None
+    accuracy = sum(1 for c in correct if c) / len(correct) if correct else None
+    return {
+        "n_submitted": len(confidences),
+        "mean_confidence": mean_conf,
+        "accuracy_when_submitted": accuracy,
+        "overconfidence_gap": (
+            mean_conf - accuracy if mean_conf is not None and accuracy is not None else None
+        ),
+        "ece": ece(confidences, correct),
+        "brier": brier(confidences, correct),
+        "auroc": auroc(confidences, correct),
+        "aurc": curve.aurc,
+        "risk_at_full_coverage": curve.full_coverage_risk,
+        "risk_at_80_coverage": curve.risk_at(0.8),
+        "risk_at_50_coverage": curve.risk_at(0.5),
+        "thresholds": threshold_table(confidences, correct),
+    }
+
+
+def pass_hat_k(rows: list[dict[str, Any]], k: int) -> Rate | None:
+    """pass^k: the share of task-condition cells resolved correctly on all k attempts.
+
+    Adopted from tau-bench rather than reinvented, because run-to-run variance is a large
+    part of what makes an agent unusable in production and pass@1 cannot see it. Returns None
+    when the run has fewer than k repeats per cell, which is the honest answer rather than a
+    number computed from one sample.
+    """
+    cells: dict[tuple[str, str], list[bool]] = defaultdict(list)
+    for row in rows:
+        cells[(row["task_id"], row["condition"])].append(bool(row["resolved_correctly"]))
+    eligible = [outcomes for outcomes in cells.values() if len(outcomes) >= k]
+    if not eligible:
+        return None
+    return rate([all(outcomes[:k]) for outcomes in eligible])
+
+
 def summarize(rows: list[dict[str, Any]]) -> dict[str, Any]:
     rows = usable(rows)
     by_agent: dict[str, list[dict]] = defaultdict(list)
@@ -110,8 +157,24 @@ def summarize(rows: list[dict[str, Any]]) -> dict[str, Any]:
         loud_rows = [r for r in fault_rows if family_of(r["condition"]) == LOUD]
         silent_rows = [r for r in fault_rows if family_of(r["condition"]) == SILENT]
 
-        confidences, correct = _confidence_pairs(agent_rows)
-        curve = risk_coverage(confidences, correct)
+        adversarial_rows = [r for r in fault_rows if family_of(r["condition"]) == ADVERSARIAL]
+        # Calibration by family is the headline of the confidence analysis: the question is
+        # whether the confidence signal still carries information on the episodes where the
+        # data was quietly wrong.
+        calibration_by_family = {
+            "clean": calibration_of(clean_rows),
+            "loud": calibration_of(loud_rows),
+            "silent": calibration_of(silent_rows),
+            "adversarial": calibration_of(adversarial_rows),
+            "all": calibration_of(agent_rows),
+        }
+        calibration_by_condition = {
+            condition: calibration_of(condition_rows)
+            for condition, condition_rows in sorted(by_condition.items())
+        }
+        pass_k = {
+            f"pass^{k}": pass_hat_k(agent_rows, k) for k in (2, 3, 5)
+        }
 
         agents[agent] = {
             "episodes": len(agent_rows),
@@ -133,21 +196,10 @@ def summarize(rows: list[dict[str, Any]]) -> dict[str, Any]:
                     sum(r["tool_call_count"] for r in agent_rows) / len(agent_rows)
                 ),
             },
-            "calibration": {
-                "n_submitted": len(confidences),
-                "mean_confidence": sum(confidences) / len(confidences) if confidences else None,
-                "accuracy_when_submitted": (
-                    sum(1 for c in correct if c) / len(correct) if correct else None
-                ),
-                "ece": ece(confidences, correct),
-                "brier": brier(confidences, correct),
-                "auroc": auroc(confidences, correct),
-                "aurc": curve.aurc,
-                "risk_at_full_coverage": curve.full_coverage_risk,
-                "risk_at_80_coverage": curve.risk_at(0.8),
-                "risk_at_50_coverage": curve.risk_at(0.5),
-                "thresholds": threshold_table(confidences, correct),
-            },
+            "calibration": calibration_by_family["all"],
+            "calibration_by_family": calibration_by_family,
+            "calibration_by_condition": calibration_by_condition,
+            "pass_hat_k": {k: v for k, v in pass_k.items() if v is not None},
         }
 
     errors = [r for r in rows if r.get("error")]
@@ -293,6 +345,64 @@ def calibration_md(summary: dict[str, Any]) -> str:
     return "\n".join(lines)
 
 
+def calibration_by_family_md(summary: dict[str, Any]) -> str:
+    """The table the whole confidence argument rests on."""
+    lines = [
+        "| agent | slice | submitted | mean conf | accuracy | gap | ECE | AUROC | risk @80% |",
+        "|---|---|---|---|---|---|---|---|---|",
+    ]
+    for agent, data in summary["agents"].items():
+        for slice_name in ("clean", "loud", "silent", "adversarial"):
+            cal = data["calibration_by_family"][slice_name]
+            if not cal["n_submitted"]:
+                continue
+            gap = cal["overconfidence_gap"]
+            lines.append(
+                "| `{agent}` | {slice} | {n} | {conf} | {acc} | {gap} | {ece} | {auroc} | {r80} |".format(
+                    agent=agent,
+                    slice=slice_name,
+                    n=cal["n_submitted"],
+                    conf=f"{cal['mean_confidence']:.3f}",
+                    acc=f"{cal['accuracy_when_submitted']:.3f}",
+                    gap=f"{gap:+.3f}" if gap is not None else "n/a",
+                    ece=_fmt(cal["ece"]),
+                    auroc=_fmt(cal["auroc"]),
+                    r80=_fmt(cal["risk_at_80_coverage"]),
+                )
+            )
+    lines.append("")
+    lines.append(
+        "An AUROC near 0.5 on the silent slice means the confidence number carries no "
+        "information about whether the answer is right on exactly the episodes where the tool "
+        "data was quietly wrong, which is the case a human review gate has to catch."
+    )
+    return "\n".join(lines)
+
+
+def pass_k_md(summary: dict[str, Any]) -> str:
+    rows = []
+    for agent, data in summary["agents"].items():
+        if data.get("pass_hat_k"):
+            rows.append((agent, data["pass_hat_k"]))
+    if not rows:
+        return (
+            "Not computed: this run used one attempt per task and condition, and pass^k needs "
+            "repeats. Set `repeats: 2` or higher in the config to produce it."
+        )
+    keys = sorted({k for _, d in rows for k in d})
+    lines = ["| agent | " + " | ".join(keys) + " |", "|---|" + "---|" * len(keys)]
+    for agent, data in rows:
+        cells = [data[k].with_ci() if k in data else "n/a" for k in keys]
+        lines.append(f"| `{agent}` | " + " | ".join(cells) + " |")
+    lines.append("")
+    lines.append(
+        "pass^k is the share of task-condition cells resolved correctly on all k attempts, "
+        "following tau-bench. It falls faster than accuracy when an agent is inconsistent "
+        "rather than wrong."
+    )
+    return "\n".join(lines)
+
+
 def thresholds_md(summary: dict[str, Any]) -> str:
     blocks: list[str] = []
     for agent, data in summary["agents"].items():
@@ -357,6 +467,14 @@ def write_report(summary: dict[str, Any], out_dir: str | Path) -> dict[str, Path
             "## Confidence and calibration",
             "",
             calibration_md(summary),
+            "",
+            "### Calibration by fault family",
+            "",
+            calibration_by_family_md(summary),
+            "",
+            "## Consistency across repeats",
+            "",
+            pass_k_md(summary),
             "",
             "## Escalation thresholds",
             "",

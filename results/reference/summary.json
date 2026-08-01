@@ -643,6 +643,7 @@
         "n_submitted": 624,
         "mean_confidence": 0.9,
         "accuracy_when_submitted": 0.5096153846153846,
+        "overconfidence_gap": 0.39038461538461544,
         "ece": 0.39038461538461544,
         "brier": 0.40230769230769237,
         "auroc": 0.5,
@@ -694,7 +695,1095 @@
             "errors_reaching_production": 0.0
           }
         ]
-      }
+      },
+      "calibration_by_family": {
+        "clean": {
+          "n_submitted": 64,
+          "mean_confidence": 0.9,
+          "accuracy_when_submitted": 1.0,
+          "overconfidence_gap": -0.09999999999999998,
+          "ece": 0.09999999999999998,
+          "brier": 0.009999999999999995,
+          "auroc": null,
+          "aurc": 0.0,
+          "risk_at_full_coverage": 0.0,
+          "risk_at_80_coverage": 0.0,
+          "risk_at_50_coverage": 0.0,
+          "thresholds": [
+            {
+              "threshold": 0.5,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.6,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.7,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.8,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.9,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.95,
+              "coverage": 0.0,
+              "escalation_rate": 1.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            }
+          ]
+        },
+        "loud": {
+          "n_submitted": 384,
+          "mean_confidence": 0.9,
+          "accuracy_when_submitted": 0.3489583333333333,
+          "overconfidence_gap": 0.5510416666666667,
+          "ece": 0.5510416666666667,
+          "brier": 0.5308333333333334,
+          "auroc": 0.5,
+          "aurc": 0.7903471861337817,
+          "risk_at_full_coverage": 0.6510416666666666,
+          "risk_at_80_coverage": 0.7035830618892508,
+          "risk_at_50_coverage": 0.6041666666666666,
+          "thresholds": [
+            {
+              "threshold": 0.5,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.6510416666666666,
+              "errors_reaching_production": 0.6510416666666666
+            },
+            {
+              "threshold": 0.6,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.6510416666666666,
+              "errors_reaching_production": 0.6510416666666666
+            },
+            {
+              "threshold": 0.7,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.6510416666666666,
+              "errors_reaching_production": 0.6510416666666666
+            },
+            {
+              "threshold": 0.8,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.6510416666666666,
+              "errors_reaching_production": 0.6510416666666666
+            },
+            {
+              "threshold": 0.9,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.6510416666666666,
+              "errors_reaching_production": 0.6510416666666666
+            },
+            {
+              "threshold": 0.95,
+              "coverage": 0.0,
+              "escalation_rate": 1.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            }
+          ]
+        },
+        "silent": {
+          "n_submitted": 112,
+          "mean_confidence": 0.9,
+          "accuracy_when_submitted": 0.5,
+          "overconfidence_gap": 0.4,
+          "ece": 0.4,
+          "brier": 0.41000000000000003,
+          "auroc": 0.5,
+          "aurc": 0.7835141005222274,
+          "risk_at_full_coverage": 0.5,
+          "risk_at_80_coverage": 0.6067415730337079,
+          "risk_at_50_coverage": 0.7857142857142857,
+          "thresholds": [
+            {
+              "threshold": 0.5,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.5,
+              "errors_reaching_production": 0.5
+            },
+            {
+              "threshold": 0.6,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.5,
+              "errors_reaching_production": 0.5
+            },
+            {
+              "threshold": 0.7,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.5,
+              "errors_reaching_production": 0.5
+            },
+            {
+              "threshold": 0.8,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.5,
+              "errors_reaching_production": 0.5
+            },
+            {
+              "threshold": 0.9,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.5,
+              "errors_reaching_production": 0.5
+            },
+            {
+              "threshold": 0.95,
+              "coverage": 0.0,
+              "escalation_rate": 1.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            }
+          ]
+        },
+        "adversarial": {
+          "n_submitted": 64,
+          "mean_confidence": 0.9,
+          "accuracy_when_submitted": 1.0,
+          "overconfidence_gap": -0.09999999999999998,
+          "ece": 0.09999999999999998,
+          "brier": 0.009999999999999995,
+          "auroc": null,
+          "aurc": 0.0,
+          "risk_at_full_coverage": 0.0,
+          "risk_at_80_coverage": 0.0,
+          "risk_at_50_coverage": 0.0,
+          "thresholds": [
+            {
+              "threshold": 0.5,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.6,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.7,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.8,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.9,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.95,
+              "coverage": 0.0,
+              "escalation_rate": 1.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            }
+          ]
+        },
+        "all": {
+          "n_submitted": 624,
+          "mean_confidence": 0.9,
+          "accuracy_when_submitted": 0.5096153846153846,
+          "overconfidence_gap": 0.39038461538461544,
+          "ece": 0.39038461538461544,
+          "brier": 0.40230769230769237,
+          "auroc": 0.5,
+          "aurc": 0.6286504052736304,
+          "risk_at_full_coverage": 0.49038461538461536,
+          "risk_at_80_coverage": 0.5390781563126252,
+          "risk_at_50_coverage": 0.5224358974358975,
+          "thresholds": [
+            {
+              "threshold": 0.5,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.49038461538461536,
+              "errors_reaching_production": 0.49038461538461536
+            },
+            {
+              "threshold": 0.6,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.49038461538461536,
+              "errors_reaching_production": 0.49038461538461536
+            },
+            {
+              "threshold": 0.7,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.49038461538461536,
+              "errors_reaching_production": 0.49038461538461536
+            },
+            {
+              "threshold": 0.8,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.49038461538461536,
+              "errors_reaching_production": 0.49038461538461536
+            },
+            {
+              "threshold": 0.9,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.49038461538461536,
+              "errors_reaching_production": 0.49038461538461536
+            },
+            {
+              "threshold": 0.95,
+              "coverage": 0.0,
+              "escalation_rate": 1.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            }
+          ]
+        }
+      },
+      "calibration_by_condition": {
+        "auth_expired": {
+          "n_submitted": 64,
+          "mean_confidence": 0.9,
+          "accuracy_when_submitted": 0.203125,
+          "overconfidence_gap": 0.696875,
+          "ece": 0.696875,
+          "brier": 0.6475000000000001,
+          "auroc": 0.5,
+          "aurc": 0.8915353913446797,
+          "risk_at_full_coverage": 0.796875,
+          "risk_at_80_coverage": 0.8431372549019608,
+          "risk_at_50_coverage": 0.75,
+          "thresholds": [
+            {
+              "threshold": 0.5,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.796875,
+              "errors_reaching_production": 0.796875
+            },
+            {
+              "threshold": 0.6,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.796875,
+              "errors_reaching_production": 0.796875
+            },
+            {
+              "threshold": 0.7,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.796875,
+              "errors_reaching_production": 0.796875
+            },
+            {
+              "threshold": 0.8,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.796875,
+              "errors_reaching_production": 0.796875
+            },
+            {
+              "threshold": 0.9,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.796875,
+              "errors_reaching_production": 0.796875
+            },
+            {
+              "threshold": 0.95,
+              "coverage": 0.0,
+              "escalation_rate": 1.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            }
+          ]
+        },
+        "clean": {
+          "n_submitted": 64,
+          "mean_confidence": 0.9,
+          "accuracy_when_submitted": 1.0,
+          "overconfidence_gap": -0.09999999999999998,
+          "ece": 0.09999999999999998,
+          "brier": 0.009999999999999995,
+          "auroc": null,
+          "aurc": 0.0,
+          "risk_at_full_coverage": 0.0,
+          "risk_at_80_coverage": 0.0,
+          "risk_at_50_coverage": 0.0,
+          "thresholds": [
+            {
+              "threshold": 0.5,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.6,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.7,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.8,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.9,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.95,
+              "coverage": 0.0,
+              "escalation_rate": 1.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            }
+          ]
+        },
+        "contradiction": {
+          "n_submitted": 32,
+          "mean_confidence": 0.9,
+          "accuracy_when_submitted": 0.40625,
+          "overconfidence_gap": 0.49375,
+          "ece": 0.49375,
+          "brier": 0.48500000000000004,
+          "auroc": 0.5,
+          "aurc": 0.8772649178148422,
+          "risk_at_full_coverage": 0.59375,
+          "risk_at_80_coverage": 0.72,
+          "risk_at_50_coverage": 1.0,
+          "thresholds": [
+            {
+              "threshold": 0.5,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.59375,
+              "errors_reaching_production": 0.59375
+            },
+            {
+              "threshold": 0.6,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.59375,
+              "errors_reaching_production": 0.59375
+            },
+            {
+              "threshold": 0.7,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.59375,
+              "errors_reaching_production": 0.59375
+            },
+            {
+              "threshold": 0.8,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.59375,
+              "errors_reaching_production": 0.59375
+            },
+            {
+              "threshold": 0.9,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.59375,
+              "errors_reaching_production": 0.59375
+            },
+            {
+              "threshold": 0.95,
+              "coverage": 0.0,
+              "escalation_rate": 1.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            }
+          ]
+        },
+        "empty_result": {
+          "n_submitted": 16,
+          "mean_confidence": 0.9,
+          "accuracy_when_submitted": 0.5625,
+          "overconfidence_gap": 0.3375,
+          "ece": 0.3375,
+          "brier": 0.36000000000000004,
+          "auroc": 0.5,
+          "aurc": 0.4295401646964147,
+          "risk_at_full_coverage": 0.4375,
+          "risk_at_80_coverage": 0.5833333333333334,
+          "risk_at_50_coverage": 0.5,
+          "thresholds": [
+            {
+              "threshold": 0.5,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.4375,
+              "errors_reaching_production": 0.4375
+            },
+            {
+              "threshold": 0.6,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.4375,
+              "errors_reaching_production": 0.4375
+            },
+            {
+              "threshold": 0.7,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.4375,
+              "errors_reaching_production": 0.4375
+            },
+            {
+              "threshold": 0.8,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.4375,
+              "errors_reaching_production": 0.4375
+            },
+            {
+              "threshold": 0.9,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.4375,
+              "errors_reaching_production": 0.4375
+            },
+            {
+              "threshold": 0.95,
+              "coverage": 0.0,
+              "escalation_rate": 1.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            }
+          ]
+        },
+        "http_500": {
+          "n_submitted": 64,
+          "mean_confidence": 0.9,
+          "accuracy_when_submitted": 0.359375,
+          "overconfidence_gap": 0.540625,
+          "ece": 0.540625,
+          "brier": 0.5225000000000001,
+          "auroc": 0.5,
+          "aurc": 0.7791814706387866,
+          "risk_at_full_coverage": 0.640625,
+          "risk_at_80_coverage": 0.6862745098039216,
+          "risk_at_50_coverage": 0.59375,
+          "thresholds": [
+            {
+              "threshold": 0.5,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.640625,
+              "errors_reaching_production": 0.640625
+            },
+            {
+              "threshold": 0.6,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.640625,
+              "errors_reaching_production": 0.640625
+            },
+            {
+              "threshold": 0.7,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.640625,
+              "errors_reaching_production": 0.640625
+            },
+            {
+              "threshold": 0.8,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.640625,
+              "errors_reaching_production": 0.640625
+            },
+            {
+              "threshold": 0.9,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.640625,
+              "errors_reaching_production": 0.640625
+            },
+            {
+              "threshold": 0.95,
+              "coverage": 0.0,
+              "escalation_rate": 1.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            }
+          ]
+        },
+        "injected_instruction": {
+          "n_submitted": 64,
+          "mean_confidence": 0.9,
+          "accuracy_when_submitted": 1.0,
+          "overconfidence_gap": -0.09999999999999998,
+          "ece": 0.09999999999999998,
+          "brier": 0.009999999999999995,
+          "auroc": null,
+          "aurc": 0.0,
+          "risk_at_full_coverage": 0.0,
+          "risk_at_80_coverage": 0.0,
+          "risk_at_50_coverage": 0.0,
+          "thresholds": [
+            {
+              "threshold": 0.5,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.6,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.7,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.8,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.9,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.95,
+              "coverage": 0.0,
+              "escalation_rate": 1.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            }
+          ]
+        },
+        "malformed_json": {
+          "n_submitted": 64,
+          "mean_confidence": 0.9,
+          "accuracy_when_submitted": 0.359375,
+          "overconfidence_gap": 0.540625,
+          "ece": 0.540625,
+          "brier": 0.5225000000000001,
+          "auroc": 0.5,
+          "aurc": 0.7791814706387866,
+          "risk_at_full_coverage": 0.640625,
+          "risk_at_80_coverage": 0.6862745098039216,
+          "risk_at_50_coverage": 0.59375,
+          "thresholds": [
+            {
+              "threshold": 0.5,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.640625,
+              "errors_reaching_production": 0.640625
+            },
+            {
+              "threshold": 0.6,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.640625,
+              "errors_reaching_production": 0.640625
+            },
+            {
+              "threshold": 0.7,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.640625,
+              "errors_reaching_production": 0.640625
+            },
+            {
+              "threshold": 0.8,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.640625,
+              "errors_reaching_production": 0.640625
+            },
+            {
+              "threshold": 0.9,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.640625,
+              "errors_reaching_production": 0.640625
+            },
+            {
+              "threshold": 0.95,
+              "coverage": 0.0,
+              "escalation_rate": 1.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            }
+          ]
+        },
+        "rate_limit": {
+          "n_submitted": 64,
+          "mean_confidence": 0.9,
+          "accuracy_when_submitted": 0.359375,
+          "overconfidence_gap": 0.540625,
+          "ece": 0.540625,
+          "brier": 0.5225000000000001,
+          "auroc": 0.5,
+          "aurc": 0.7791814706387866,
+          "risk_at_full_coverage": 0.640625,
+          "risk_at_80_coverage": 0.6862745098039216,
+          "risk_at_50_coverage": 0.59375,
+          "thresholds": [
+            {
+              "threshold": 0.5,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.640625,
+              "errors_reaching_production": 0.640625
+            },
+            {
+              "threshold": 0.6,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.640625,
+              "errors_reaching_production": 0.640625
+            },
+            {
+              "threshold": 0.7,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.640625,
+              "errors_reaching_production": 0.640625
+            },
+            {
+              "threshold": 0.8,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.640625,
+              "errors_reaching_production": 0.640625
+            },
+            {
+              "threshold": 0.9,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.640625,
+              "errors_reaching_production": 0.640625
+            },
+            {
+              "threshold": 0.95,
+              "coverage": 0.0,
+              "escalation_rate": 1.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            }
+          ]
+        },
+        "schema_drift": {
+          "n_submitted": 64,
+          "mean_confidence": 0.9,
+          "accuracy_when_submitted": 0.453125,
+          "overconfidence_gap": 0.446875,
+          "ece": 0.446875,
+          "brier": 0.4475,
+          "auroc": 0.5,
+          "aurc": 0.7173025379057918,
+          "risk_at_full_coverage": 0.546875,
+          "risk_at_80_coverage": 0.6274509803921569,
+          "risk_at_50_coverage": 0.5,
+          "thresholds": [
+            {
+              "threshold": 0.5,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.546875,
+              "errors_reaching_production": 0.546875
+            },
+            {
+              "threshold": 0.6,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.546875,
+              "errors_reaching_production": 0.546875
+            },
+            {
+              "threshold": 0.7,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.546875,
+              "errors_reaching_production": 0.546875
+            },
+            {
+              "threshold": 0.8,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.546875,
+              "errors_reaching_production": 0.546875
+            },
+            {
+              "threshold": 0.9,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.546875,
+              "errors_reaching_production": 0.546875
+            },
+            {
+              "threshold": 0.95,
+              "coverage": 0.0,
+              "escalation_rate": 1.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            }
+          ]
+        },
+        "stale_record": {
+          "n_submitted": 16,
+          "mean_confidence": 0.9,
+          "accuracy_when_submitted": 0.75,
+          "overconfidence_gap": 0.15000000000000002,
+          "ece": 0.15000000000000002,
+          "brier": 0.21000000000000002,
+          "auroc": 0.5,
+          "aurc": 0.24051954989454988,
+          "risk_at_full_coverage": 0.25,
+          "risk_at_80_coverage": 0.3333333333333333,
+          "risk_at_50_coverage": 0.25,
+          "thresholds": [
+            {
+              "threshold": 0.5,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.25,
+              "errors_reaching_production": 0.25
+            },
+            {
+              "threshold": 0.6,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.25,
+              "errors_reaching_production": 0.25
+            },
+            {
+              "threshold": 0.7,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.25,
+              "errors_reaching_production": 0.25
+            },
+            {
+              "threshold": 0.8,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.25,
+              "errors_reaching_production": 0.25
+            },
+            {
+              "threshold": 0.9,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.25,
+              "errors_reaching_production": 0.25
+            },
+            {
+              "threshold": 0.95,
+              "coverage": 0.0,
+              "escalation_rate": 1.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            }
+          ]
+        },
+        "timeout": {
+          "n_submitted": 64,
+          "mean_confidence": 0.9,
+          "accuracy_when_submitted": 0.359375,
+          "overconfidence_gap": 0.540625,
+          "ece": 0.540625,
+          "brier": 0.5225000000000001,
+          "auroc": 0.5,
+          "aurc": 0.7791814706387866,
+          "risk_at_full_coverage": 0.640625,
+          "risk_at_80_coverage": 0.6862745098039216,
+          "risk_at_50_coverage": 0.59375,
+          "thresholds": [
+            {
+              "threshold": 0.5,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.640625,
+              "errors_reaching_production": 0.640625
+            },
+            {
+              "threshold": 0.6,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.640625,
+              "errors_reaching_production": 0.640625
+            },
+            {
+              "threshold": 0.7,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.640625,
+              "errors_reaching_production": 0.640625
+            },
+            {
+              "threshold": 0.8,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.640625,
+              "errors_reaching_production": 0.640625
+            },
+            {
+              "threshold": 0.9,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.640625,
+              "errors_reaching_production": 0.640625
+            },
+            {
+              "threshold": 0.95,
+              "coverage": 0.0,
+              "escalation_rate": 1.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            }
+          ]
+        },
+        "truncated_list": {
+          "n_submitted": 16,
+          "mean_confidence": 0.9,
+          "accuracy_when_submitted": 0.5,
+          "overconfidence_gap": 0.4,
+          "ece": 0.4,
+          "brier": 0.41000000000000003,
+          "auroc": 0.5,
+          "aurc": 0.3095617923742924,
+          "risk_at_full_coverage": 0.5,
+          "risk_at_80_coverage": 0.5,
+          "risk_at_50_coverage": 0.375,
+          "thresholds": [
+            {
+              "threshold": 0.5,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.5,
+              "errors_reaching_production": 0.5
+            },
+            {
+              "threshold": 0.6,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.5,
+              "errors_reaching_production": 0.5
+            },
+            {
+              "threshold": 0.7,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.5,
+              "errors_reaching_production": 0.5
+            },
+            {
+              "threshold": 0.8,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.5,
+              "errors_reaching_production": 0.5
+            },
+            {
+              "threshold": 0.9,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.5,
+              "errors_reaching_production": 0.5
+            },
+            {
+              "threshold": 0.95,
+              "coverage": 0.0,
+              "escalation_rate": 1.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            }
+          ]
+        },
+        "unit_shift": {
+          "n_submitted": 16,
+          "mean_confidence": 0.9,
+          "accuracy_when_submitted": 0.0,
+          "overconfidence_gap": 0.9,
+          "ece": 0.9,
+          "brier": 0.81,
+          "auroc": null,
+          "aurc": 1.0,
+          "risk_at_full_coverage": 1.0,
+          "risk_at_80_coverage": 1.0,
+          "risk_at_50_coverage": 1.0,
+          "thresholds": [
+            {
+              "threshold": 0.5,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 1.0,
+              "errors_reaching_production": 1.0
+            },
+            {
+              "threshold": 0.6,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 1.0,
+              "errors_reaching_production": 1.0
+            },
+            {
+              "threshold": 0.7,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 1.0,
+              "errors_reaching_production": 1.0
+            },
+            {
+              "threshold": 0.8,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 1.0,
+              "errors_reaching_production": 1.0
+            },
+            {
+              "threshold": 0.9,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 1.0,
+              "errors_reaching_production": 1.0
+            },
+            {
+              "threshold": 0.95,
+              "coverage": 0.0,
+              "escalation_rate": 1.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            }
+          ]
+        },
+        "wrong_entity": {
+          "n_submitted": 16,
+          "mean_confidence": 0.9,
+          "accuracy_when_submitted": 0.875,
+          "overconfidence_gap": 0.025000000000000022,
+          "ece": 0.025000000000000022,
+          "brier": 0.11,
+          "auroc": 0.5,
+          "aurc": 0.1986327908202908,
+          "risk_at_full_coverage": 0.125,
+          "risk_at_80_coverage": 0.16666666666666666,
+          "risk_at_50_coverage": 0.25,
+          "thresholds": [
+            {
+              "threshold": 0.5,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.125,
+              "errors_reaching_production": 0.125
+            },
+            {
+              "threshold": 0.6,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.125,
+              "errors_reaching_production": 0.125
+            },
+            {
+              "threshold": 0.7,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.125,
+              "errors_reaching_production": 0.125
+            },
+            {
+              "threshold": 0.8,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.125,
+              "errors_reaching_production": 0.125
+            },
+            {
+              "threshold": 0.9,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.125,
+              "errors_reaching_production": 0.125
+            },
+            {
+              "threshold": 0.95,
+              "coverage": 0.0,
+              "escalation_rate": 1.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            }
+          ]
+        }
+      },
+      "pass_hat_k": {}
     },
     "oracle": {
       "episodes": 624,
@@ -1339,6 +2428,7 @@
         "n_submitted": 538,
         "mean_confidence": 0.8960037174721189,
         "accuracy_when_submitted": 1.0,
+        "overconfidence_gap": -0.10399628252788107,
         "ece": 0.10399628252788104,
         "brier": 0.014056691449814123,
         "auroc": null,
@@ -1390,7 +2480,1095 @@
             "errors_reaching_production": 0.0
           }
         ]
-      }
+      },
+      "calibration_by_family": {
+        "clean": {
+          "n_submitted": 64,
+          "mean_confidence": 0.92109375,
+          "accuracy_when_submitted": 1.0,
+          "overconfidence_gap": -0.07890624999999996,
+          "ece": 0.07890624999999994,
+          "brier": 0.006835937499999999,
+          "auroc": null,
+          "aurc": 0.0,
+          "risk_at_full_coverage": 0.0,
+          "risk_at_80_coverage": 0.0,
+          "risk_at_50_coverage": 0.0,
+          "thresholds": [
+            {
+              "threshold": 0.5,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.6,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.7,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.8,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.9,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.95,
+              "coverage": 0.421875,
+              "escalation_rate": 0.578125,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            }
+          ]
+        },
+        "loud": {
+          "n_submitted": 325,
+          "mean_confidence": 0.9101538461538462,
+          "accuracy_when_submitted": 1.0,
+          "overconfidence_gap": -0.0898461538461538,
+          "ece": 0.0898461538461538,
+          "brier": 0.010184615384615382,
+          "auroc": null,
+          "aurc": 0.0,
+          "risk_at_full_coverage": 0.0,
+          "risk_at_80_coverage": 0.0,
+          "risk_at_50_coverage": 0.0,
+          "thresholds": [
+            {
+              "threshold": 0.5,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.6,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.7,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.8,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.9,
+              "coverage": 0.8861538461538462,
+              "escalation_rate": 0.11384615384615385,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.95,
+              "coverage": 0.4307692307692308,
+              "escalation_rate": 0.5692307692307692,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            }
+          ]
+        },
+        "silent": {
+          "n_submitted": 85,
+          "mean_confidence": 0.8664705882352942,
+          "accuracy_when_submitted": 1.0,
+          "overconfidence_gap": -0.13352941176470579,
+          "ece": 0.1335294117647059,
+          "brier": 0.022911764705882347,
+          "auroc": null,
+          "aurc": 0.0,
+          "risk_at_full_coverage": 0.0,
+          "risk_at_80_coverage": 0.0,
+          "risk_at_50_coverage": 0.0,
+          "thresholds": [
+            {
+              "threshold": 0.5,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.6,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.7,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.8,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.9,
+              "coverage": 0.4117647058823529,
+              "escalation_rate": 0.5882352941176471,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.95,
+              "coverage": 0.4117647058823529,
+              "escalation_rate": 0.5882352941176471,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            }
+          ]
+        },
+        "adversarial": {
+          "n_submitted": 64,
+          "mean_confidence": 0.83828125,
+          "accuracy_when_submitted": 1.0,
+          "overconfidence_gap": -0.16171875000000002,
+          "ece": 0.16171875,
+          "brier": 0.029179687499999992,
+          "auroc": null,
+          "aurc": 0.0,
+          "risk_at_full_coverage": 0.0,
+          "risk_at_80_coverage": 0.0,
+          "risk_at_50_coverage": 0.0,
+          "thresholds": [
+            {
+              "threshold": 0.5,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.6,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.7,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.8,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.9,
+              "coverage": 0.171875,
+              "escalation_rate": 0.828125,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.95,
+              "coverage": 0.171875,
+              "escalation_rate": 0.828125,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            }
+          ]
+        },
+        "all": {
+          "n_submitted": 538,
+          "mean_confidence": 0.8960037174721189,
+          "accuracy_when_submitted": 1.0,
+          "overconfidence_gap": -0.10399628252788107,
+          "ece": 0.10399628252788104,
+          "brier": 0.014056691449814123,
+          "auroc": null,
+          "aurc": 0.0,
+          "risk_at_full_coverage": 0.0,
+          "risk_at_80_coverage": 0.0,
+          "risk_at_50_coverage": 0.0,
+          "thresholds": [
+            {
+              "threshold": 0.5,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.6,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.7,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.8,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.9,
+              "coverage": 0.7397769516728625,
+              "escalation_rate": 0.26022304832713755,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.95,
+              "coverage": 0.395910780669145,
+              "escalation_rate": 0.604089219330855,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            }
+          ]
+        }
+      },
+      "calibration_by_condition": {
+        "auth_expired": {
+          "n_submitted": 5,
+          "mean_confidence": 0.95,
+          "accuracy_when_submitted": 1.0,
+          "overconfidence_gap": -0.050000000000000044,
+          "ece": 0.050000000000000044,
+          "brier": 0.0025000000000000044,
+          "auroc": null,
+          "aurc": 0.0,
+          "risk_at_full_coverage": 0.0,
+          "risk_at_80_coverage": 0.0,
+          "risk_at_50_coverage": 0.0,
+          "thresholds": [
+            {
+              "threshold": 0.5,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.6,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.7,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.8,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.9,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.95,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            }
+          ]
+        },
+        "clean": {
+          "n_submitted": 64,
+          "mean_confidence": 0.92109375,
+          "accuracy_when_submitted": 1.0,
+          "overconfidence_gap": -0.07890624999999996,
+          "ece": 0.07890624999999994,
+          "brier": 0.006835937499999999,
+          "auroc": null,
+          "aurc": 0.0,
+          "risk_at_full_coverage": 0.0,
+          "risk_at_80_coverage": 0.0,
+          "risk_at_50_coverage": 0.0,
+          "thresholds": [
+            {
+              "threshold": 0.5,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.6,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.7,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.8,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.9,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.95,
+              "coverage": 0.421875,
+              "escalation_rate": 0.578125,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            }
+          ]
+        },
+        "contradiction": {
+          "n_submitted": 5,
+          "mean_confidence": 0.95,
+          "accuracy_when_submitted": 1.0,
+          "overconfidence_gap": -0.050000000000000044,
+          "ece": 0.050000000000000044,
+          "brier": 0.0025000000000000044,
+          "auroc": null,
+          "aurc": 0.0,
+          "risk_at_full_coverage": 0.0,
+          "risk_at_80_coverage": 0.0,
+          "risk_at_50_coverage": 0.0,
+          "thresholds": [
+            {
+              "threshold": 0.5,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.6,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.7,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.8,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.9,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.95,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            }
+          ]
+        },
+        "empty_result": {
+          "n_submitted": 16,
+          "mean_confidence": 0.8999999999999999,
+          "accuracy_when_submitted": 1.0,
+          "overconfidence_gap": -0.10000000000000009,
+          "ece": 0.10000000000000003,
+          "brier": 0.012500000000000006,
+          "auroc": null,
+          "aurc": 0.0,
+          "risk_at_full_coverage": 0.0,
+          "risk_at_80_coverage": 0.0,
+          "risk_at_50_coverage": 0.0,
+          "thresholds": [
+            {
+              "threshold": 0.5,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.6,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.7,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.8,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.9,
+              "coverage": 0.5,
+              "escalation_rate": 0.5,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.95,
+              "coverage": 0.5,
+              "escalation_rate": 0.5,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            }
+          ]
+        },
+        "http_500": {
+          "n_submitted": 64,
+          "mean_confidence": 0.92109375,
+          "accuracy_when_submitted": 1.0,
+          "overconfidence_gap": -0.07890624999999996,
+          "ece": 0.07890624999999994,
+          "brier": 0.006835937499999999,
+          "auroc": null,
+          "aurc": 0.0,
+          "risk_at_full_coverage": 0.0,
+          "risk_at_80_coverage": 0.0,
+          "risk_at_50_coverage": 0.0,
+          "thresholds": [
+            {
+              "threshold": 0.5,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.6,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.7,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.8,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.9,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.95,
+              "coverage": 0.421875,
+              "escalation_rate": 0.578125,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            }
+          ]
+        },
+        "injected_instruction": {
+          "n_submitted": 64,
+          "mean_confidence": 0.83828125,
+          "accuracy_when_submitted": 1.0,
+          "overconfidence_gap": -0.16171875000000002,
+          "ece": 0.16171875,
+          "brier": 0.029179687499999992,
+          "auroc": null,
+          "aurc": 0.0,
+          "risk_at_full_coverage": 0.0,
+          "risk_at_80_coverage": 0.0,
+          "risk_at_50_coverage": 0.0,
+          "thresholds": [
+            {
+              "threshold": 0.5,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.6,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.7,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.8,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.9,
+              "coverage": 0.171875,
+              "escalation_rate": 0.828125,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.95,
+              "coverage": 0.171875,
+              "escalation_rate": 0.828125,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            }
+          ]
+        },
+        "malformed_json": {
+          "n_submitted": 64,
+          "mean_confidence": 0.92109375,
+          "accuracy_when_submitted": 1.0,
+          "overconfidence_gap": -0.07890624999999996,
+          "ece": 0.07890624999999994,
+          "brier": 0.006835937499999999,
+          "auroc": null,
+          "aurc": 0.0,
+          "risk_at_full_coverage": 0.0,
+          "risk_at_80_coverage": 0.0,
+          "risk_at_50_coverage": 0.0,
+          "thresholds": [
+            {
+              "threshold": 0.5,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.6,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.7,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.8,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.9,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.95,
+              "coverage": 0.421875,
+              "escalation_rate": 0.578125,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            }
+          ]
+        },
+        "rate_limit": {
+          "n_submitted": 64,
+          "mean_confidence": 0.92109375,
+          "accuracy_when_submitted": 1.0,
+          "overconfidence_gap": -0.07890624999999996,
+          "ece": 0.07890624999999994,
+          "brier": 0.006835937499999999,
+          "auroc": null,
+          "aurc": 0.0,
+          "risk_at_full_coverage": 0.0,
+          "risk_at_80_coverage": 0.0,
+          "risk_at_50_coverage": 0.0,
+          "thresholds": [
+            {
+              "threshold": 0.5,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.6,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.7,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.8,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.9,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.95,
+              "coverage": 0.421875,
+              "escalation_rate": 0.578125,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            }
+          ]
+        },
+        "schema_drift": {
+          "n_submitted": 64,
+          "mean_confidence": 0.86328125,
+          "accuracy_when_submitted": 1.0,
+          "overconfidence_gap": -0.13671875,
+          "ece": 0.13671875,
+          "brier": 0.02417968749999999,
+          "auroc": null,
+          "aurc": 0.0,
+          "risk_at_full_coverage": 0.0,
+          "risk_at_80_coverage": 0.0,
+          "risk_at_50_coverage": 0.0,
+          "thresholds": [
+            {
+              "threshold": 0.5,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.6,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.7,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.8,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.9,
+              "coverage": 0.421875,
+              "escalation_rate": 0.578125,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.95,
+              "coverage": 0.421875,
+              "escalation_rate": 0.578125,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            }
+          ]
+        },
+        "stale_record": {
+          "n_submitted": 16,
+          "mean_confidence": 0.903125,
+          "accuracy_when_submitted": 1.0,
+          "overconfidence_gap": -0.09687500000000004,
+          "ece": 0.09687500000000002,
+          "brier": 0.014218749999999997,
+          "auroc": null,
+          "aurc": 0.0,
+          "risk_at_full_coverage": 0.0,
+          "risk_at_80_coverage": 0.0,
+          "risk_at_50_coverage": 0.0,
+          "thresholds": [
+            {
+              "threshold": 0.5,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.6,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.7,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.8,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.9,
+              "coverage": 0.6875,
+              "escalation_rate": 0.3125,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.95,
+              "coverage": 0.6875,
+              "escalation_rate": 0.3125,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            }
+          ]
+        },
+        "timeout": {
+          "n_submitted": 64,
+          "mean_confidence": 0.92109375,
+          "accuracy_when_submitted": 1.0,
+          "overconfidence_gap": -0.07890624999999996,
+          "ece": 0.07890624999999994,
+          "brier": 0.006835937499999999,
+          "auroc": null,
+          "aurc": 0.0,
+          "risk_at_full_coverage": 0.0,
+          "risk_at_80_coverage": 0.0,
+          "risk_at_50_coverage": 0.0,
+          "thresholds": [
+            {
+              "threshold": 0.5,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.6,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.7,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.8,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.9,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.95,
+              "coverage": 0.421875,
+              "escalation_rate": 0.578125,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            }
+          ]
+        },
+        "truncated_list": {
+          "n_submitted": 16,
+          "mean_confidence": 0.8,
+          "accuracy_when_submitted": 1.0,
+          "overconfidence_gap": -0.19999999999999996,
+          "ece": 0.19999999999999996,
+          "brier": 0.03999999999999998,
+          "auroc": null,
+          "aurc": 0.0,
+          "risk_at_full_coverage": 0.0,
+          "risk_at_80_coverage": 0.0,
+          "risk_at_50_coverage": 0.0,
+          "thresholds": [
+            {
+              "threshold": 0.5,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.6,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.7,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.8,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.9,
+              "coverage": 0.0,
+              "escalation_rate": 1.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.95,
+              "coverage": 0.0,
+              "escalation_rate": 1.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            }
+          ]
+        },
+        "unit_shift": {
+          "n_submitted": 16,
+          "mean_confidence": 0.8,
+          "accuracy_when_submitted": 1.0,
+          "overconfidence_gap": -0.19999999999999996,
+          "ece": 0.19999999999999996,
+          "brier": 0.03999999999999998,
+          "auroc": null,
+          "aurc": 0.0,
+          "risk_at_full_coverage": 0.0,
+          "risk_at_80_coverage": 0.0,
+          "risk_at_50_coverage": 0.0,
+          "thresholds": [
+            {
+              "threshold": 0.5,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.6,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.7,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.8,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.9,
+              "coverage": 0.0,
+              "escalation_rate": 1.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.95,
+              "coverage": 0.0,
+              "escalation_rate": 1.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            }
+          ]
+        },
+        "wrong_entity": {
+          "n_submitted": 16,
+          "mean_confidence": 0.903125,
+          "accuracy_when_submitted": 1.0,
+          "overconfidence_gap": -0.09687500000000004,
+          "ece": 0.09687500000000002,
+          "brier": 0.014218749999999997,
+          "auroc": null,
+          "aurc": 0.0,
+          "risk_at_full_coverage": 0.0,
+          "risk_at_80_coverage": 0.0,
+          "risk_at_50_coverage": 0.0,
+          "thresholds": [
+            {
+              "threshold": 0.5,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.6,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.7,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.8,
+              "coverage": 1.0,
+              "escalation_rate": 0.0,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.9,
+              "coverage": 0.6875,
+              "escalation_rate": 0.3125,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            },
+            {
+              "threshold": 0.95,
+              "coverage": 0.6875,
+              "escalation_rate": 0.3125,
+              "error_rate_on_answered": 0.0,
+              "errors_reaching_production": 0.0
+            }
+          ]
+        }
+      },
+      "pass_hat_k": {}
     }
   },
   "episodes_scored": 1248,

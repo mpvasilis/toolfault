@@ -3,14 +3,14 @@
 run_id: micro
 world_seed: 7
 task_seed: 11
-tasks_per_type: 1
+tasks_per_type: 3
 repeats: 1
 max_tool_calls: 18
 budget_usd: 0.50
-workers: 3
+workers: 6
 save_traces: all
 out_dir: runs
-conditions: [clean, stale_record, unit_shift, truncated_list, contradiction, injected_instruction]
+conditions: [clean, stale_record, wrong_entity, empty_result, unit_shift, truncated_list, contradiction, injected_instruction]
 
 agents:
   - kind: huggingface

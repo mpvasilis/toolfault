@@ -1,0 +1,47 @@
+{
+  "run_id": "micro",
+  "world_seed": 7,
+  "task_seed": 11,
+  "tasks_per_type": 3,
+  "tasks": 12,
+  "repeats": 1,
+  "max_tool_calls": 18,
+  "conditions": [
+    "clean",
+    "stale_record",
+    "wrong_entity",
+    "empty_result",
+    "unit_shift",
+    "truncated_list",
+    "contradiction",
+    "injected_instruction"
+  ],
+  "task_types": [
+    "verify_entity",
+    "ubo_chain",
+    "revenue_eur",
+    "sanctions_screen"
+  ],
+  "episodes_planned": 44,
+  "episodes_completed": 44,
+  "budget_usd": 0.5,
+  "spent_usd": 0.0323,
+  "spend_by_model": {
+    "openai/gpt-oss-20b": 0.0323
+  },
+  "model_calls": 234,
+  "stopped_on_budget": false,
+  "prices_usd_per_million": {
+    "openai/gpt-oss-20b": [
+      0.05,
+      0.2
+    ]
+  },
+  "agents": [
+    {
+      "label": "gpt-oss-20b",
+      "kind": "huggingface",
+      "model": "openai/gpt-oss-20b"
+    }
+  ]
+}
