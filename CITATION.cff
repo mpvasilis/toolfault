@@ -1,0 +1,32 @@
+cff-version: 1.2.0
+title: "toolfault: a fault-injection benchmark for tool-using LLM agents"
+message: "If you use this benchmark, please cite it."
+type: software
+authors:
+  - given-names: Vasileios
+    family-names: Balafas
+    email: me@vasilis.pw
+    affiliation: "Independent"
+repository-code: "https://github.com/mpvasilis/toolfault"
+license: MIT
+version: 0.1.0
+date-released: "2026-08-01"
+keywords:
+  - large language models
+  - agents
+  - tool use
+  - reliability
+  - fault injection
+  - calibration
+  - selective prediction
+abstract: >-
+  A benchmark that measures whether a tool-using agent's own confidence signal
+  carries information on the episodes where a tool returned plausible wrong data,
+  and what an escalation threshold built on that signal costs. Thirteen faults in
+  three families (loud, silent, adversarial) are injected one per episode against a
+  deterministic synthetic corporate registry. Ground truth is derived from world
+  state by pure functions, with no LLM judge in the scoring path. Calibration is
+  reported per fault condition rather than in aggregate. A hand-written reference
+  policy resolves all fourteen conditions, so the ceiling is known and enforced in
+  continuous integration, and degenerate baselines are published to show the
+  benchmark cannot be scored without doing the verification work.

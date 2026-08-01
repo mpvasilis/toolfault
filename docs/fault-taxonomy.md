@@ -3,7 +3,7 @@
 Thirteen faults, three families, one fault per episode. This document is the reference for
 what each one does, how it is meant to be caught, and why it is in the set.
 
-Two properties hold for all of them, and the test suite enforces both:
+Three properties hold for all of them, and the test suite enforces each:
 
 1. **The fault fires.** A condition that never lands would appear in the results as a
    reassuring "no effect". `tests/test_solvable.py::test_every_fault_actually_fires` fails
@@ -11,6 +11,54 @@ Two properties hold for all of them, and the test suite enforces both:
 2. **The fault is survivable.** Each one has a recovery path that a policy can execute
    using only the tools. The reference policy resolves every condition at 1.0, so a drop is
    agent failure rather than an unwinnable setup.
+3. **The fault cannot be dodged by choosing a different source.** Loud faults fire on the first
+   call to any evidence-bearing tool. Silent faults land on either the primary source or the
+   corroborating one, chosen per episode. See the section below, which exists because the first
+   version of this benchmark got it wrong.
+
+## The side choice, and the hole it closes
+
+An adversarial review before publication found that the benchmark was gameable. Every fault landed
+on the primary tool for its task, and the corroborating sources were never corrupted. So a policy
+of the form "resolve through `search_registry`, then read only `get_entity_snapshot`,
+`screen_officer_batch` and `get_ownership_document`, and believe whatever they say" evaded
+`stale_record`, `wrong_entity`, `contradiction` and `auth_expired` on verification, and
+`truncated_list` on ownership. It scored close to the reference policy while doing no
+cross-checking at all: single-source credulity with the sources swapped. That inverts the property
+the benchmark is built to measure.
+
+It was worse than that on the revenue task, where document ids were `DOC-00163-2025`. An agent
+could construct a filed-document id from an entity index and a year and reach the corroborating
+source without ever calling `get_filings`, the tool the fault was injected into.
+
+Three changes close it:
+
+- **Silent faults land on either side.** The side is `sha256(task_id | fault_id) % 2`, so it is
+  fixed per episode, reproducible across machines, and not learnable from the tool name. Each side
+  carries its own tell, so a cross-checking policy recovers either way while a single-source policy
+  is wrong about half the time whichever source it picked.
+- **Loud faults target every evidence-bearing tool** and fire on the first call to any of them.
+  `auth_expired` now breaks the whole registry credential rather than one endpoint, because scoped
+  to one endpoint it was recoverable by asking elsewhere, which turned the set's only terminal
+  error into a retryable one.
+- **Identifiers are digests.** `E-398277`, `DOC-207361`. A document can only be reached through the
+  filing row that names it, which is also how a real registry behaves.
+
+The effect on the reference numbers is the point rather than a side effect. The `naive` policy went
+from 21% to 48% on silent faults, because it reads only primary sources and is therefore exposed on
+only half the episodes now. The `oracle` stayed at 1.0. The gap between them is now a measurement
+of reconciliation specifically, not of which source a policy happened to prefer.
+
+The mirrored tell for each fault:
+
+| fault | tell on the primary side | tell on the corroborating side |
+|---|---|---|
+| `stale_record` | `cache: HIT` and a `retrieved_at` from 2024 | the archive answers for 2024-12-18 when today was requested |
+| `wrong_entity` | `get_entity` returns another company's id | the archive returns another company's id |
+| `empty_result` | the per-name screen reports clear | the batch screen reports clear |
+| `truncated_list` | percentages no longer sum to 100 | the register states four holders and lists two |
+| `contradiction` | no tell on either side, by design; escalate | as primary |
+| `unit_shift` | primary only: the document is unreachable without the filing row | not applicable |
 
 ## Why the families are drawn this way
 
