@@ -1,0 +1,60 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Install
+        run: uv pip install --system -e ".[dev]"
+
+      - name: Lint
+        run: ruff check .
+
+      - name: Tests
+        run: pytest -q
+
+      # The benchmark runs end to end on every push, with no API key and no cost, and
+      # fails the build if the reference policy stops resolving every condition. A
+      # benchmark whose ceiling drifts silently is worse than no benchmark.
+      - name: Solvability gate
+        run: toolfault selftest --tasks-per-type 8 --quiet
+
+      - name: Determinism gate
+        run: |
+          toolfault selftest --tasks-per-type 6 --run-id det-a --quiet
+          toolfault selftest --tasks-per-type 6 --run-id det-b --quiet
+          python - <<'PY'
+          import json, pathlib, sys
+
+          def rows(run):
+              path = pathlib.Path("runs") / run / "episodes.jsonl"
+              out = {}
+              for line in path.read_text(encoding="utf-8").splitlines():
+                  row = json.loads(line)
+                  key = (row["agent"], row["task_id"], row["condition"])
+                  out[key] = (row["answer"], row["terminal"], row["outcome"], row["tool_call_count"])
+              return out
+
+          a, b = rows("det-a"), rows("det-b")
+          if a != b:
+              differing = [k for k in a if a.get(k) != b.get(k)]
+              print(f"non-deterministic across {len(differing)} cells, e.g. {differing[:5]}")
+              sys.exit(1)
+          print(f"deterministic across {len(a)} cells")
+          PY

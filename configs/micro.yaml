@@ -1,0 +1,18 @@
+# Twelve episodes on one model. The point is to measure real tokens per episode so a full
+# grid can be costed before it is paid for, rather than estimated from guesses.
+run_id: micro
+world_seed: 7
+task_seed: 11
+tasks_per_type: 1
+repeats: 1
+max_tool_calls: 18
+budget_usd: 0.50
+workers: 3
+save_traces: all
+out_dir: runs
+conditions: [clean, stale_record, unit_shift, truncated_list, contradiction, injected_instruction]
+
+agents:
+  - kind: huggingface
+    model: openai/gpt-oss-20b
+    label: gpt-oss-20b

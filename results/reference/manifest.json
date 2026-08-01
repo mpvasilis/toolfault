@@ -1,0 +1,51 @@
+{
+  "run_id": "reference",
+  "world_seed": 7,
+  "task_seed": 11,
+  "tasks_per_type": 16,
+  "tasks": 64,
+  "repeats": 1,
+  "max_tool_calls": 18,
+  "conditions": [
+    "clean",
+    "timeout",
+    "http_500",
+    "rate_limit",
+    "malformed_json",
+    "schema_drift",
+    "auth_expired",
+    "empty_result",
+    "stale_record",
+    "truncated_list",
+    "wrong_entity",
+    "contradiction",
+    "unit_shift",
+    "injected_instruction"
+  ],
+  "task_types": [
+    "verify_entity",
+    "ubo_chain",
+    "revenue_eur",
+    "sanctions_screen"
+  ],
+  "episodes_planned": 1248,
+  "episodes_completed": 1248,
+  "budget_usd": 0.0,
+  "spent_usd": 0.0,
+  "spend_by_model": {},
+  "model_calls": 0,
+  "stopped_on_budget": false,
+  "prices_usd_per_million": {},
+  "agents": [
+    {
+      "label": "oracle",
+      "kind": "oracle",
+      "model": ""
+    },
+    {
+      "label": "naive",
+      "kind": "naive",
+      "model": ""
+    }
+  ]
+}

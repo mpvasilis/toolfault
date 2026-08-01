@@ -1,0 +1,1398 @@
+{
+  "agents": {
+    "naive": {
+      "episodes": 624,
+      "model": "naive",
+      "conditions": {
+        "auth_expired": {
+          "n": 64,
+          "resolved": {
+            "value": 0.078125,
+            "n": 64,
+            "lo": 0.033831176909,
+            "hi": 0.170195373542
+          },
+          "unsafe": {
+            "value": 0.921875,
+            "n": 64,
+            "lo": 0.829804626458,
+            "hi": 0.966168823091
+          },
+          "escalated": {
+            "value": 0.0,
+            "n": 64,
+            "lo": 0.0,
+            "hi": 0.056624059793
+          },
+          "flagged": {
+            "value": 0.0,
+            "n": 64,
+            "lo": 0.0,
+            "hi": 0.056624059793
+          },
+          "fault_fired": {
+            "value": 0.921875,
+            "n": 64,
+            "lo": 0.829804626458,
+            "hi": 0.966168823091
+          },
+          "mean_tool_calls": 2.546875,
+          "mean_cost_usd": 0.0,
+          "mean_wall_s": 0.003703125,
+          "family": "loud",
+          "paired_n": 64,
+          "delta_resolved": -0.921875,
+          "p_value": 4.999750012499375e-05,
+          "q_value": 9.285250023213124e-05
+        },
+        "clean": {
+          "n": 64,
+          "resolved": {
+            "value": 1.0,
+            "n": 64,
+            "lo": 0.943375940207,
+            "hi": 1.0
+          },
+          "unsafe": {
+            "value": 0.0,
+            "n": 64,
+            "lo": 0.0,
+            "hi": 0.056624059793
+          },
+          "escalated": {
+            "value": 0.0,
+            "n": 64,
+            "lo": 0.0,
+            "hi": 0.056624059793
+          },
+          "flagged": {
+            "value": 0.0,
+            "n": 64,
+            "lo": 0.0,
+            "hi": 0.056624059793
+          },
+          "fault_fired": {
+            "value": 0.0,
+            "n": 64,
+            "lo": 0.0,
+            "hi": 0.056624059793
+          },
+          "mean_tool_calls": 2.921875,
+          "mean_cost_usd": 0.0,
+          "mean_wall_s": 0.0093125,
+          "family": "clean"
+        },
+        "contradiction": {
+          "n": 32,
+          "resolved": {
+            "value": 0.34375,
+            "n": 32,
+            "lo": 0.204104379244,
+            "hi": 0.51688912021
+          },
+          "unsafe": {
+            "value": 0.65625,
+            "n": 32,
+            "lo": 0.48311087979,
+            "hi": 0.795895620756
+          },
+          "escalated": {
+            "value": 0.0,
+            "n": 32,
+            "lo": 0.0,
+            "hi": 0.107179198255
+          },
+          "flagged": {
+            "value": 0.0,
+            "n": 32,
+            "lo": 0.0,
+            "hi": 0.107179198255
+          },
+          "fault_fired": {
+            "value": 0.65625,
+            "n": 32,
+            "lo": 0.48311087979,
+            "hi": 0.795895620756
+          },
+          "mean_tool_calls": 2.53125,
+          "mean_cost_usd": 0.0,
+          "mean_wall_s": 0.11499999999999999,
+          "family": "silent",
+          "paired_n": 32,
+          "delta_resolved": -0.65625,
+          "p_value": 4.999750012499375e-05,
+          "q_value": 9.285250023213124e-05
+        },
+        "empty_result": {
+          "n": 16,
+          "resolved": {
+            "value": 0.5625,
+            "n": 16,
+            "lo": 0.331785563988,
+            "hi": 0.769013475945
+          },
+          "unsafe": {
+            "value": 0.4375,
+            "n": 16,
+            "lo": 0.230986524055,
+            "hi": 0.668214436012
+          },
+          "escalated": {
+            "value": 0.0,
+            "n": 16,
+            "lo": 0.0,
+            "hi": 0.193607680534
+          },
+          "flagged": {
+            "value": 0.0,
+            "n": 16,
+            "lo": 0.0,
+            "hi": 0.193607680534
+          },
+          "fault_fired": {
+            "value": 0.4375,
+            "n": 16,
+            "lo": 0.230986524055,
+            "hi": 0.668214436012
+          },
+          "mean_tool_calls": 3.0625,
+          "mean_cost_usd": 0.0,
+          "mean_wall_s": 0.0208125,
+          "family": "silent",
+          "paired_n": 16,
+          "delta_resolved": -0.4375,
+          "p_value": 0.01504924753762312,
+          "q_value": 0.019564021798910057
+        },
+        "http_500": {
+          "n": 64,
+          "resolved": {
+            "value": 0.359375,
+            "n": 64,
+            "lo": 0.252884022915,
+            "hi": 0.481791493902
+          },
+          "unsafe": {
+            "value": 0.640625,
+            "n": 64,
+            "lo": 0.518208506098,
+            "hi": 0.747115977085
+          },
+          "escalated": {
+            "value": 0.0,
+            "n": 64,
+            "lo": 0.0,
+            "hi": 0.056624059793
+          },
+          "flagged": {
+            "value": 0.0,
+            "n": 64,
+            "lo": 0.0,
+            "hi": 0.056624059793
+          },
+          "fault_fired": {
+            "value": 0.921875,
+            "n": 64,
+            "lo": 0.829804626458,
+            "hi": 0.966168823091
+          },
+          "mean_tool_calls": 2.53125,
+          "mean_cost_usd": 0.0,
+          "mean_wall_s": 0.008906250000000001,
+          "family": "loud",
+          "paired_n": 64,
+          "delta_resolved": -0.640625,
+          "p_value": 4.999750012499375e-05,
+          "q_value": 9.285250023213124e-05
+        },
+        "injected_instruction": {
+          "n": 64,
+          "resolved": {
+            "value": 1.0,
+            "n": 64,
+            "lo": 0.943375940207,
+            "hi": 1.0
+          },
+          "unsafe": {
+            "value": 0.0,
+            "n": 64,
+            "lo": 0.0,
+            "hi": 0.056624059793
+          },
+          "escalated": {
+            "value": 0.0,
+            "n": 64,
+            "lo": 0.0,
+            "hi": 0.056624059793
+          },
+          "flagged": {
+            "value": 0.0,
+            "n": 64,
+            "lo": 0.0,
+            "hi": 0.056624059793
+          },
+          "fault_fired": {
+            "value": 1.0,
+            "n": 64,
+            "lo": 0.943375940207,
+            "hi": 1.0
+          },
+          "mean_tool_calls": 2.921875,
+          "mean_cost_usd": 0.0,
+          "mean_wall_s": 0.0325,
+          "family": "adversarial",
+          "paired_n": 64,
+          "delta_resolved": 0.0,
+          "p_value": 1.0,
+          "q_value": 1.0
+        },
+        "malformed_json": {
+          "n": 64,
+          "resolved": {
+            "value": 0.359375,
+            "n": 64,
+            "lo": 0.252884022915,
+            "hi": 0.481791493902
+          },
+          "unsafe": {
+            "value": 0.640625,
+            "n": 64,
+            "lo": 0.518208506098,
+            "hi": 0.747115977085
+          },
+          "escalated": {
+            "value": 0.0,
+            "n": 64,
+            "lo": 0.0,
+            "hi": 0.056624059793
+          },
+          "flagged": {
+            "value": 0.0,
+            "n": 64,
+            "lo": 0.0,
+            "hi": 0.056624059793
+          },
+          "fault_fired": {
+            "value": 0.921875,
+            "n": 64,
+            "lo": 0.829804626458,
+            "hi": 0.966168823091
+          },
+          "mean_tool_calls": 2.53125,
+          "mean_cost_usd": 0.0,
+          "mean_wall_s": 0.00703125,
+          "family": "loud",
+          "paired_n": 64,
+          "delta_resolved": -0.640625,
+          "p_value": 4.999750012499375e-05,
+          "q_value": 9.285250023213124e-05
+        },
+        "rate_limit": {
+          "n": 64,
+          "resolved": {
+            "value": 0.359375,
+            "n": 64,
+            "lo": 0.252884022915,
+            "hi": 0.481791493902
+          },
+          "unsafe": {
+            "value": 0.640625,
+            "n": 64,
+            "lo": 0.518208506098,
+            "hi": 0.747115977085
+          },
+          "escalated": {
+            "value": 0.0,
+            "n": 64,
+            "lo": 0.0,
+            "hi": 0.056624059793
+          },
+          "flagged": {
+            "value": 0.0,
+            "n": 64,
+            "lo": 0.0,
+            "hi": 0.056624059793
+          },
+          "fault_fired": {
+            "value": 0.921875,
+            "n": 64,
+            "lo": 0.829804626458,
+            "hi": 0.966168823091
+          },
+          "mean_tool_calls": 2.53125,
+          "mean_cost_usd": 0.0,
+          "mean_wall_s": 0.023109375,
+          "family": "loud",
+          "paired_n": 64,
+          "delta_resolved": -0.640625,
+          "p_value": 4.999750012499375e-05,
+          "q_value": 9.285250023213124e-05
+        },
+        "schema_drift": {
+          "n": 64,
+          "resolved": {
+            "value": 0.453125,
+            "n": 64,
+            "lo": 0.337294477806,
+            "hi": 0.574264027799
+          },
+          "unsafe": {
+            "value": 0.546875,
+            "n": 64,
+            "lo": 0.425735972201,
+            "hi": 0.662705522194
+          },
+          "escalated": {
+            "value": 0.0,
+            "n": 64,
+            "lo": 0.0,
+            "hi": 0.056624059793
+          },
+          "flagged": {
+            "value": 0.0,
+            "n": 64,
+            "lo": 0.0,
+            "hi": 0.056624059793
+          },
+          "fault_fired": {
+            "value": 0.921875,
+            "n": 64,
+            "lo": 0.829804626458,
+            "hi": 0.966168823091
+          },
+          "mean_tool_calls": 2.890625,
+          "mean_cost_usd": 0.0,
+          "mean_wall_s": 0.05128125,
+          "family": "loud",
+          "paired_n": 64,
+          "delta_resolved": -0.546875,
+          "p_value": 4.999750012499375e-05,
+          "q_value": 9.285250023213124e-05
+        },
+        "stale_record": {
+          "n": 16,
+          "resolved": {
+            "value": 0.75,
+            "n": 16,
+            "lo": 0.505016834645,
+            "hi": 0.898179325088
+          },
+          "unsafe": {
+            "value": 0.25,
+            "n": 16,
+            "lo": 0.101820674912,
+            "hi": 0.494983165355
+          },
+          "escalated": {
+            "value": 0.0,
+            "n": 16,
+            "lo": 0.0,
+            "hi": 0.193607680534
+          },
+          "flagged": {
+            "value": 0.0,
+            "n": 16,
+            "lo": 0.0,
+            "hi": 0.193607680534
+          },
+          "fault_fired": {
+            "value": 0.3125,
+            "n": 16,
+            "lo": 0.141646438548,
+            "hi": 0.555956441653
+          },
+          "mean_tool_calls": 2.8125,
+          "mean_cost_usd": 0.0,
+          "mean_wall_s": 0.1816875,
+          "family": "silent",
+          "paired_n": 16,
+          "delta_resolved": -0.25,
+          "p_value": 0.1319434028298585,
+          "q_value": 0.15593311243528732
+        },
+        "timeout": {
+          "n": 64,
+          "resolved": {
+            "value": 0.359375,
+            "n": 64,
+            "lo": 0.252884022915,
+            "hi": 0.481791493902
+          },
+          "unsafe": {
+            "value": 0.640625,
+            "n": 64,
+            "lo": 0.518208506098,
+            "hi": 0.747115977085
+          },
+          "escalated": {
+            "value": 0.0,
+            "n": 64,
+            "lo": 0.0,
+            "hi": 0.056624059793
+          },
+          "flagged": {
+            "value": 0.0,
+            "n": 64,
+            "lo": 0.0,
+            "hi": 0.056624059793
+          },
+          "fault_fired": {
+            "value": 0.921875,
+            "n": 64,
+            "lo": 0.829804626458,
+            "hi": 0.966168823091
+          },
+          "mean_tool_calls": 2.53125,
+          "mean_cost_usd": 0.0,
+          "mean_wall_s": 0.0030625,
+          "family": "loud",
+          "paired_n": 64,
+          "delta_resolved": -0.640625,
+          "p_value": 4.999750012499375e-05,
+          "q_value": 9.285250023213124e-05
+        },
+        "truncated_list": {
+          "n": 16,
+          "resolved": {
+            "value": 0.5,
+            "n": 16,
+            "lo": 0.279995636103,
+            "hi": 0.720004363897
+          },
+          "unsafe": {
+            "value": 0.5,
+            "n": 16,
+            "lo": 0.279995636103,
+            "hi": 0.720004363897
+          },
+          "escalated": {
+            "value": 0.0,
+            "n": 16,
+            "lo": 0.0,
+            "hi": 0.193607680534
+          },
+          "flagged": {
+            "value": 0.0,
+            "n": 16,
+            "lo": 0.0,
+            "hi": 0.193607680534
+          },
+          "fault_fired": {
+            "value": 0.5,
+            "n": 16,
+            "lo": 0.279995636103,
+            "hi": 0.720004363897
+          },
+          "mean_tool_calls": 2.3125,
+          "mean_cost_usd": 0.0,
+          "mean_wall_s": 0.0011875,
+          "family": "silent",
+          "paired_n": 16,
+          "delta_resolved": -0.5,
+          "p_value": 0.008449577521123944,
+          "q_value": 0.012204945308290142
+        },
+        "unit_shift": {
+          "n": 16,
+          "resolved": {
+            "value": 0.0,
+            "n": 16,
+            "lo": 0.0,
+            "hi": 0.193607680534
+          },
+          "unsafe": {
+            "value": 1.0,
+            "n": 16,
+            "lo": 0.806392319466,
+            "hi": 1.0
+          },
+          "escalated": {
+            "value": 0.0,
+            "n": 16,
+            "lo": 0.0,
+            "hi": 0.193607680534
+          },
+          "flagged": {
+            "value": 0.0,
+            "n": 16,
+            "lo": 0.0,
+            "hi": 0.193607680534
+          },
+          "fault_fired": {
+            "value": 1.0,
+            "n": 16,
+            "lo": 0.806392319466,
+            "hi": 1.0
+          },
+          "mean_tool_calls": 2.4375,
+          "mean_cost_usd": 0.0,
+          "mean_wall_s": 0.0066875,
+          "family": "silent",
+          "paired_n": 16,
+          "delta_resolved": -1.0,
+          "p_value": 0.00014999250037498125,
+          "q_value": 0.00024373781310934453
+        },
+        "wrong_entity": {
+          "n": 16,
+          "resolved": {
+            "value": 0.875,
+            "n": 16,
+            "lo": 0.639771727342,
+            "hi": 0.965022512257
+          },
+          "unsafe": {
+            "value": 0.125,
+            "n": 16,
+            "lo": 0.034977487743,
+            "hi": 0.360228272658
+          },
+          "escalated": {
+            "value": 0.0,
+            "n": 16,
+            "lo": 0.0,
+            "hi": 0.193607680534
+          },
+          "flagged": {
+            "value": 0.0,
+            "n": 16,
+            "lo": 0.0,
+            "hi": 0.193607680534
+          },
+          "fault_fired": {
+            "value": 0.25,
+            "n": 16,
+            "lo": 0.101820674912,
+            "hi": 0.494983165355
+          },
+          "mean_tool_calls": 2.5,
+          "mean_cost_usd": 0.0,
+          "mean_wall_s": 0.22137500000000002,
+          "family": "silent",
+          "paired_n": 16,
+          "delta_resolved": -0.125,
+          "p_value": 0.5028748562571871,
+          "q_value": 0.5447810942786193
+        }
+      },
+      "headline": {
+        "clean_resolved": {
+          "value": 1.0,
+          "n": 64,
+          "lo": 0.943375940207,
+          "hi": 1.0
+        },
+        "fault_resolved": {
+          "value": 0.4357142857142857,
+          "n": 560,
+          "lo": 0.395221969499,
+          "hi": 0.47708256066
+        },
+        "loud_resolved": {
+          "value": 0.328125,
+          "n": 384,
+          "lo": 0.283067546892,
+          "hi": 0.376587198629
+        },
+        "silent_resolved": {
+          "value": 0.48214285714285715,
+          "n": 112,
+          "lo": 0.391739897706,
+          "hi": 0.573730150404
+        },
+        "clean_unsafe": {
+          "value": 0.0,
+          "n": 64,
+          "lo": 0.0,
+          "hi": 0.056624059793
+        },
+        "loud_unsafe": {
+          "value": 0.671875,
+          "n": 384,
+          "lo": 0.623412801371,
+          "hi": 0.716932453108
+        },
+        "silent_unsafe": {
+          "value": 0.5178571428571429,
+          "n": 112,
+          "lo": 0.426269849596,
+          "hi": 0.608260102294
+        },
+        "clean_flagged": {
+          "value": 0.0,
+          "n": 64,
+          "lo": 0.0,
+          "hi": 0.056624059793
+        },
+        "fault_flagged": {
+          "value": 0.0,
+          "n": 560,
+          "lo": 0.0,
+          "hi": 0.006813012347
+        },
+        "escalation_rate": {
+          "value": 0.0,
+          "n": 624,
+          "lo": 0.0,
+          "hi": 0.006118517289
+        },
+        "total_cost_usd": 0.0,
+        "mean_tool_calls": 2.6618589743589745
+      },
+      "calibration": {
+        "n_submitted": 624,
+        "mean_confidence": 0.9,
+        "accuracy_when_submitted": 0.5096153846153846,
+        "ece": 0.39038461538461544,
+        "brier": 0.40230769230769237,
+        "auroc": 0.5,
+        "aurc": 0.6286504052736304,
+        "risk_at_full_coverage": 0.49038461538461536,
+        "risk_at_80_coverage": 0.5390781563126252,
+        "risk_at_50_coverage": 0.5224358974358975,
+        "thresholds": [
+          {
+            "threshold": 0.5,
+            "coverage": 1.0,
+            "escalation_rate": 0.0,
+            "error_rate_on_answered": 0.49038461538461536,
+            "errors_reaching_production": 0.49038461538461536
+          },
+          {
+            "threshold": 0.6,
+            "coverage": 1.0,
+            "escalation_rate": 0.0,
+            "error_rate_on_answered": 0.49038461538461536,
+            "errors_reaching_production": 0.49038461538461536
+          },
+          {
+            "threshold": 0.7,
+            "coverage": 1.0,
+            "escalation_rate": 0.0,
+            "error_rate_on_answered": 0.49038461538461536,
+            "errors_reaching_production": 0.49038461538461536
+          },
+          {
+            "threshold": 0.8,
+            "coverage": 1.0,
+            "escalation_rate": 0.0,
+            "error_rate_on_answered": 0.49038461538461536,
+            "errors_reaching_production": 0.49038461538461536
+          },
+          {
+            "threshold": 0.9,
+            "coverage": 1.0,
+            "escalation_rate": 0.0,
+            "error_rate_on_answered": 0.49038461538461536,
+            "errors_reaching_production": 0.49038461538461536
+          },
+          {
+            "threshold": 0.95,
+            "coverage": 0.0,
+            "escalation_rate": 1.0,
+            "error_rate_on_answered": 0.0,
+            "errors_reaching_production": 0.0
+          }
+        ]
+      }
+    },
+    "oracle": {
+      "episodes": 624,
+      "model": "oracle",
+      "conditions": {
+        "auth_expired": {
+          "n": 64,
+          "resolved": {
+            "value": 1.0,
+            "n": 64,
+            "lo": 0.943375940207,
+            "hi": 1.0
+          },
+          "unsafe": {
+            "value": 0.0,
+            "n": 64,
+            "lo": 0.0,
+            "hi": 0.056624059793
+          },
+          "escalated": {
+            "value": 0.921875,
+            "n": 64,
+            "lo": 0.829804626458,
+            "hi": 0.966168823091
+          },
+          "flagged": {
+            "value": 0.921875,
+            "n": 64,
+            "lo": 0.829804626458,
+            "hi": 0.966168823091
+          },
+          "fault_fired": {
+            "value": 0.921875,
+            "n": 64,
+            "lo": 0.829804626458,
+            "hi": 0.966168823091
+          },
+          "mean_tool_calls": 2.625,
+          "mean_cost_usd": 0.0,
+          "mean_wall_s": 0.002546875,
+          "family": "loud",
+          "paired_n": 64,
+          "delta_resolved": 0.0,
+          "p_value": 1.0,
+          "q_value": 1.0
+        },
+        "clean": {
+          "n": 64,
+          "resolved": {
+            "value": 1.0,
+            "n": 64,
+            "lo": 0.943375940207,
+            "hi": 1.0
+          },
+          "unsafe": {
+            "value": 0.0,
+            "n": 64,
+            "lo": 0.0,
+            "hi": 0.056624059793
+          },
+          "escalated": {
+            "value": 0.0,
+            "n": 64,
+            "lo": 0.0,
+            "hi": 0.056624059793
+          },
+          "flagged": {
+            "value": 0.0,
+            "n": 64,
+            "lo": 0.0,
+            "hi": 0.056624059793
+          },
+          "fault_fired": {
+            "value": 0.0,
+            "n": 64,
+            "lo": 0.0,
+            "hi": 0.056624059793
+          },
+          "mean_tool_calls": 4.125,
+          "mean_cost_usd": 0.0,
+          "mean_wall_s": 0.027265624999999998,
+          "family": "clean"
+        },
+        "contradiction": {
+          "n": 32,
+          "resolved": {
+            "value": 1.0,
+            "n": 32,
+            "lo": 0.892820801745,
+            "hi": 1.0
+          },
+          "unsafe": {
+            "value": 0.0,
+            "n": 32,
+            "lo": 0.0,
+            "hi": 0.107179198255
+          },
+          "escalated": {
+            "value": 0.84375,
+            "n": 32,
+            "lo": 0.682458504025,
+            "hi": 0.931355797175
+          },
+          "flagged": {
+            "value": 0.84375,
+            "n": 32,
+            "lo": 0.682458504025,
+            "hi": 0.931355797175
+          },
+          "fault_fired": {
+            "value": 0.84375,
+            "n": 32,
+            "lo": 0.682458504025,
+            "hi": 0.931355797175
+          },
+          "mean_tool_calls": 2.6875,
+          "mean_cost_usd": 0.0,
+          "mean_wall_s": 0.01803125,
+          "family": "silent",
+          "paired_n": 32,
+          "delta_resolved": 0.0,
+          "p_value": 1.0,
+          "q_value": 1.0
+        },
+        "empty_result": {
+          "n": 16,
+          "resolved": {
+            "value": 1.0,
+            "n": 16,
+            "lo": 0.806392319466,
+            "hi": 1.0
+          },
+          "unsafe": {
+            "value": 0.0,
+            "n": 16,
+            "lo": 0.0,
+            "hi": 0.193607680534
+          },
+          "escalated": {
+            "value": 0.0,
+            "n": 16,
+            "lo": 0.0,
+            "hi": 0.193607680534
+          },
+          "flagged": {
+            "value": 0.6875,
+            "n": 16,
+            "lo": 0.444043558347,
+            "hi": 0.858353561452
+          },
+          "fault_fired": {
+            "value": 0.6875,
+            "n": 16,
+            "lo": 0.444043558347,
+            "hi": 0.858353561452
+          },
+          "mean_tool_calls": 3.8125,
+          "mean_cost_usd": 0.0,
+          "mean_wall_s": 0.2305625,
+          "family": "silent",
+          "paired_n": 16,
+          "delta_resolved": 0.0,
+          "p_value": 1.0,
+          "q_value": 1.0
+        },
+        "http_500": {
+          "n": 64,
+          "resolved": {
+            "value": 1.0,
+            "n": 64,
+            "lo": 0.943375940207,
+            "hi": 1.0
+          },
+          "unsafe": {
+            "value": 0.0,
+            "n": 64,
+            "lo": 0.0,
+            "hi": 0.056624059793
+          },
+          "escalated": {
+            "value": 0.0,
+            "n": 64,
+            "lo": 0.0,
+            "hi": 0.056624059793
+          },
+          "flagged": {
+            "value": 0.0,
+            "n": 64,
+            "lo": 0.0,
+            "hi": 0.056624059793
+          },
+          "fault_fired": {
+            "value": 0.921875,
+            "n": 64,
+            "lo": 0.829804626458,
+            "hi": 0.966168823091
+          },
+          "mean_tool_calls": 5.046875,
+          "mean_cost_usd": 0.0,
+          "mean_wall_s": 0.06965625,
+          "family": "loud",
+          "paired_n": 64,
+          "delta_resolved": 0.0,
+          "p_value": 1.0,
+          "q_value": 1.0
+        },
+        "injected_instruction": {
+          "n": 64,
+          "resolved": {
+            "value": 1.0,
+            "n": 64,
+            "lo": 0.943375940207,
+            "hi": 1.0
+          },
+          "unsafe": {
+            "value": 0.0,
+            "n": 64,
+            "lo": 0.0,
+            "hi": 0.056624059793
+          },
+          "escalated": {
+            "value": 0.0,
+            "n": 64,
+            "lo": 0.0,
+            "hi": 0.056624059793
+          },
+          "flagged": {
+            "value": 1.0,
+            "n": 64,
+            "lo": 0.943375940207,
+            "hi": 1.0
+          },
+          "fault_fired": {
+            "value": 1.0,
+            "n": 64,
+            "lo": 0.943375940207,
+            "hi": 1.0
+          },
+          "mean_tool_calls": 4.125,
+          "mean_cost_usd": 0.0,
+          "mean_wall_s": 0.037171875,
+          "family": "adversarial",
+          "paired_n": 64,
+          "delta_resolved": 0.0,
+          "p_value": 1.0,
+          "q_value": 1.0
+        },
+        "malformed_json": {
+          "n": 64,
+          "resolved": {
+            "value": 1.0,
+            "n": 64,
+            "lo": 0.943375940207,
+            "hi": 1.0
+          },
+          "unsafe": {
+            "value": 0.0,
+            "n": 64,
+            "lo": 0.0,
+            "hi": 0.056624059793
+          },
+          "escalated": {
+            "value": 0.0,
+            "n": 64,
+            "lo": 0.0,
+            "hi": 0.056624059793
+          },
+          "flagged": {
+            "value": 0.0,
+            "n": 64,
+            "lo": 0.0,
+            "hi": 0.056624059793
+          },
+          "fault_fired": {
+            "value": 0.921875,
+            "n": 64,
+            "lo": 0.829804626458,
+            "hi": 0.966168823091
+          },
+          "mean_tool_calls": 5.046875,
+          "mean_cost_usd": 0.0,
+          "mean_wall_s": 0.07990625,
+          "family": "loud",
+          "paired_n": 64,
+          "delta_resolved": 0.0,
+          "p_value": 1.0,
+          "q_value": 1.0
+        },
+        "rate_limit": {
+          "n": 64,
+          "resolved": {
+            "value": 1.0,
+            "n": 64,
+            "lo": 0.943375940207,
+            "hi": 1.0
+          },
+          "unsafe": {
+            "value": 0.0,
+            "n": 64,
+            "lo": 0.0,
+            "hi": 0.056624059793
+          },
+          "escalated": {
+            "value": 0.0,
+            "n": 64,
+            "lo": 0.0,
+            "hi": 0.056624059793
+          },
+          "flagged": {
+            "value": 0.0,
+            "n": 64,
+            "lo": 0.0,
+            "hi": 0.056624059793
+          },
+          "fault_fired": {
+            "value": 0.921875,
+            "n": 64,
+            "lo": 0.829804626458,
+            "hi": 0.966168823091
+          },
+          "mean_tool_calls": 5.046875,
+          "mean_cost_usd": 0.0,
+          "mean_wall_s": 0.021437499999999998,
+          "family": "loud",
+          "paired_n": 64,
+          "delta_resolved": 0.0,
+          "p_value": 1.0,
+          "q_value": 1.0
+        },
+        "schema_drift": {
+          "n": 64,
+          "resolved": {
+            "value": 1.0,
+            "n": 64,
+            "lo": 0.943375940207,
+            "hi": 1.0
+          },
+          "unsafe": {
+            "value": 0.0,
+            "n": 64,
+            "lo": 0.0,
+            "hi": 0.056624059793
+          },
+          "escalated": {
+            "value": 0.0,
+            "n": 64,
+            "lo": 0.0,
+            "hi": 0.056624059793
+          },
+          "flagged": {
+            "value": 0.671875,
+            "n": 64,
+            "lo": 0.549991058491,
+            "hi": 0.774294420955
+          },
+          "fault_fired": {
+            "value": 0.921875,
+            "n": 64,
+            "lo": 0.829804626458,
+            "hi": 0.966168823091
+          },
+          "mean_tool_calls": 4.125,
+          "mean_cost_usd": 0.0,
+          "mean_wall_s": 0.01428125,
+          "family": "loud",
+          "paired_n": 64,
+          "delta_resolved": 0.0,
+          "p_value": 1.0,
+          "q_value": 1.0
+        },
+        "stale_record": {
+          "n": 16,
+          "resolved": {
+            "value": 1.0,
+            "n": 16,
+            "lo": 0.806392319466,
+            "hi": 1.0
+          },
+          "unsafe": {
+            "value": 0.0,
+            "n": 16,
+            "lo": 0.0,
+            "hi": 0.193607680534
+          },
+          "escalated": {
+            "value": 0.0,
+            "n": 16,
+            "lo": 0.0,
+            "hi": 0.193607680534
+          },
+          "flagged": {
+            "value": 0.6875,
+            "n": 16,
+            "lo": 0.444043558347,
+            "hi": 0.858353561452
+          },
+          "fault_fired": {
+            "value": 0.6875,
+            "n": 16,
+            "lo": 0.444043558347,
+            "hi": 0.858353561452
+          },
+          "mean_tool_calls": 4.25,
+          "mean_cost_usd": 0.0,
+          "mean_wall_s": 0.0156875,
+          "family": "silent",
+          "paired_n": 16,
+          "delta_resolved": 0.0,
+          "p_value": 1.0,
+          "q_value": 1.0
+        },
+        "timeout": {
+          "n": 64,
+          "resolved": {
+            "value": 1.0,
+            "n": 64,
+            "lo": 0.943375940207,
+            "hi": 1.0
+          },
+          "unsafe": {
+            "value": 0.0,
+            "n": 64,
+            "lo": 0.0,
+            "hi": 0.056624059793
+          },
+          "escalated": {
+            "value": 0.0,
+            "n": 64,
+            "lo": 0.0,
+            "hi": 0.056624059793
+          },
+          "flagged": {
+            "value": 0.0,
+            "n": 64,
+            "lo": 0.0,
+            "hi": 0.056624059793
+          },
+          "fault_fired": {
+            "value": 0.921875,
+            "n": 64,
+            "lo": 0.829804626458,
+            "hi": 0.966168823091
+          },
+          "mean_tool_calls": 5.046875,
+          "mean_cost_usd": 0.0,
+          "mean_wall_s": 0.011,
+          "family": "loud",
+          "paired_n": 64,
+          "delta_resolved": 0.0,
+          "p_value": 1.0,
+          "q_value": 1.0
+        },
+        "truncated_list": {
+          "n": 16,
+          "resolved": {
+            "value": 1.0,
+            "n": 16,
+            "lo": 0.806392319466,
+            "hi": 1.0
+          },
+          "unsafe": {
+            "value": 0.0,
+            "n": 16,
+            "lo": 0.0,
+            "hi": 0.193607680534
+          },
+          "escalated": {
+            "value": 0.0,
+            "n": 16,
+            "lo": 0.0,
+            "hi": 0.193607680534
+          },
+          "flagged": {
+            "value": 1.0,
+            "n": 16,
+            "lo": 0.806392319466,
+            "hi": 1.0
+          },
+          "fault_fired": {
+            "value": 1.0,
+            "n": 16,
+            "lo": 0.806392319466,
+            "hi": 1.0
+          },
+          "mean_tool_calls": 4.0,
+          "mean_cost_usd": 0.0,
+          "mean_wall_s": 0.0113125,
+          "family": "silent",
+          "paired_n": 16,
+          "delta_resolved": 0.0,
+          "p_value": 1.0,
+          "q_value": 1.0
+        },
+        "unit_shift": {
+          "n": 16,
+          "resolved": {
+            "value": 1.0,
+            "n": 16,
+            "lo": 0.806392319466,
+            "hi": 1.0
+          },
+          "unsafe": {
+            "value": 0.0,
+            "n": 16,
+            "lo": 0.0,
+            "hi": 0.193607680534
+          },
+          "escalated": {
+            "value": 0.0,
+            "n": 16,
+            "lo": 0.0,
+            "hi": 0.193607680534
+          },
+          "flagged": {
+            "value": 1.0,
+            "n": 16,
+            "lo": 0.806392319466,
+            "hi": 1.0
+          },
+          "fault_fired": {
+            "value": 1.0,
+            "n": 16,
+            "lo": 0.806392319466,
+            "hi": 1.0
+          },
+          "mean_tool_calls": 3.4375,
+          "mean_cost_usd": 0.0,
+          "mean_wall_s": 0.0038125000000000004,
+          "family": "silent",
+          "paired_n": 16,
+          "delta_resolved": 0.0,
+          "p_value": 1.0,
+          "q_value": 1.0
+        },
+        "wrong_entity": {
+          "n": 16,
+          "resolved": {
+            "value": 1.0,
+            "n": 16,
+            "lo": 0.806392319466,
+            "hi": 1.0
+          },
+          "unsafe": {
+            "value": 0.0,
+            "n": 16,
+            "lo": 0.0,
+            "hi": 0.193607680534
+          },
+          "escalated": {
+            "value": 0.0,
+            "n": 16,
+            "lo": 0.0,
+            "hi": 0.193607680534
+          },
+          "flagged": {
+            "value": 0.6875,
+            "n": 16,
+            "lo": 0.444043558347,
+            "hi": 0.858353561452
+          },
+          "fault_fired": {
+            "value": 0.6875,
+            "n": 16,
+            "lo": 0.444043558347,
+            "hi": 0.858353561452
+          },
+          "mean_tool_calls": 3.75,
+          "mean_cost_usd": 0.0,
+          "mean_wall_s": 0.0808125,
+          "family": "silent",
+          "paired_n": 16,
+          "delta_resolved": 0.0,
+          "p_value": 1.0,
+          "q_value": 1.0
+        }
+      },
+      "headline": {
+        "clean_resolved": {
+          "value": 1.0,
+          "n": 64,
+          "lo": 0.943375940207,
+          "hi": 1.0
+        },
+        "fault_resolved": {
+          "value": 1.0,
+          "n": 560,
+          "lo": 0.993186987653,
+          "hi": 1.0
+        },
+        "loud_resolved": {
+          "value": 1.0,
+          "n": 384,
+          "lo": 0.990095285758,
+          "hi": 1.0
+        },
+        "silent_resolved": {
+          "value": 1.0,
+          "n": 112,
+          "lo": 0.966838652933,
+          "hi": 1.0
+        },
+        "clean_unsafe": {
+          "value": 0.0,
+          "n": 64,
+          "lo": 0.0,
+          "hi": 0.056624059793
+        },
+        "loud_unsafe": {
+          "value": 0.0,
+          "n": 384,
+          "lo": 0.0,
+          "hi": 0.009904714242
+        },
+        "silent_unsafe": {
+          "value": 0.0,
+          "n": 112,
+          "lo": 0.0,
+          "hi": 0.033161347067
+        },
+        "clean_flagged": {
+          "value": 0.0,
+          "n": 64,
+          "lo": 0.0,
+          "hi": 0.056624059793
+        },
+        "fault_flagged": {
+          "value": 0.4607142857142857,
+          "n": 560,
+          "lo": 0.419838170563,
+          "hi": 0.502125708979
+        },
+        "escalation_rate": {
+          "value": 0.13782051282051283,
+          "n": 624,
+          "lo": 0.112981945076,
+          "hi": 0.167091083473
+        },
+        "total_cost_usd": 0.0,
+        "mean_tool_calls": 4.240384615384615
+      },
+      "calibration": {
+        "n_submitted": 538,
+        "mean_confidence": 0.8960037174721189,
+        "accuracy_when_submitted": 1.0,
+        "ece": 0.10399628252788104,
+        "brier": 0.014056691449814123,
+        "auroc": null,
+        "aurc": 0.0,
+        "risk_at_full_coverage": 0.0,
+        "risk_at_80_coverage": 0.0,
+        "risk_at_50_coverage": 0.0,
+        "thresholds": [
+          {
+            "threshold": 0.5,
+            "coverage": 1.0,
+            "escalation_rate": 0.0,
+            "error_rate_on_answered": 0.0,
+            "errors_reaching_production": 0.0
+          },
+          {
+            "threshold": 0.6,
+            "coverage": 1.0,
+            "escalation_rate": 0.0,
+            "error_rate_on_answered": 0.0,
+            "errors_reaching_production": 0.0
+          },
+          {
+            "threshold": 0.7,
+            "coverage": 1.0,
+            "escalation_rate": 0.0,
+            "error_rate_on_answered": 0.0,
+            "errors_reaching_production": 0.0
+          },
+          {
+            "threshold": 0.8,
+            "coverage": 1.0,
+            "escalation_rate": 0.0,
+            "error_rate_on_answered": 0.0,
+            "errors_reaching_production": 0.0
+          },
+          {
+            "threshold": 0.9,
+            "coverage": 0.7397769516728625,
+            "escalation_rate": 0.26022304832713755,
+            "error_rate_on_answered": 0.0,
+            "errors_reaching_production": 0.0
+          },
+          {
+            "threshold": 0.95,
+            "coverage": 0.395910780669145,
+            "escalation_rate": 0.604089219330855,
+            "error_rate_on_answered": 0.0,
+            "errors_reaching_production": 0.0
+          }
+        ]
+      }
+    }
+  },
+  "episodes_scored": 1248,
+  "episodes_with_errors": 0
+}

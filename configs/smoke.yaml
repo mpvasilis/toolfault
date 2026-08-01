@@ -1,0 +1,18 @@
+# Cheap sanity run: one model, two tasks per type, the full condition grid.
+# Use this to check an adapter and to measure real cost per episode before sizing a grid.
+run_id: smoke
+world_seed: 7
+task_seed: 11
+tasks_per_type: 2
+repeats: 1
+max_tool_calls: 18
+budget_usd: 1.00
+workers: 4
+save_traces: all
+out_dir: runs
+
+agents:
+  - kind: oracle
+  - kind: naive
+  - kind: openai
+    model: gpt-5-nano
