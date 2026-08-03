@@ -77,6 +77,61 @@ asymmetry is the whole reason a gate exists.
 
 `toolfault report` emits this table per agent under "Escalation thresholds".
 
+## What five models actually do
+
+From the published grid: 4,992 episodes, 624 per agent, world seed 7, task seed 11, 16 tasks per
+type. Confidence AUROC against correctness, computed **separately per fault family** on the episodes
+where the agent submitted an answer.
+
+| model | clean | loud | **silent** | adversarial | silent gap | silent ECE |
+|---|---|---|---|---|---|---|
+| `deepseek-v3.1` | n/a | 0.662 | **n/a** | n/a | -0.093 | 0.093 |
+| `gpt-oss-20b` | 0.202 | 0.316 | **0.636** | 0.833 | +0.275 | 0.275 |
+| `kimi-k2-0905` | 0.158 | 0.382 | **0.448** | 0.415 | +0.096 | 0.096 |
+| `qwen3-235b-a22b` | 0.414 | 0.339 | **0.365** | 0.157 | +0.147 | 0.167 |
+| `gpt-oss-120b` | 0.117 | 0.164 | **0.234** | 0.391 | +0.184 | 0.257 |
+
+Read the silent column, because that is the one a review gate has to catch.
+
+**Three of five models sit at or below 0.5.** `gpt-oss-120b` at 0.234 and `qwen3-235b-a22b` at 0.365
+are not merely uninformative, they are inverted: on silent-fault episodes, the answers they were
+*more* confident about were *more* likely to be wrong. A threshold policy built on those numbers
+does not fail gracefully. It preferentially forwards the wrong answers to production and escalates
+the right ones. `kimi-k2` at 0.448 is indistinguishable from a coin toss.
+
+Only `gpt-oss-20b` (0.636) carries usable signal, and it is the smallest model in the grid, which is
+not the direction anyone would predict.
+
+**`deepseek-v3.1` shows n/a for a reason worth stating.** Of 112 silent-fault episodes it submitted
+an answer on only 32, and every one of those 32 was correct. AUROC is undefined with one class
+absent. It escalated 71.4% of silent-fault episodes and raised a data-quality flag on 99.1% of them.
+That is a coherent and defensible policy: notice almost everything, hand almost everything to a
+human, and be right when you do answer. Its unsafe rate on silent faults is 5.4%, the lowest of any
+model. Its resolution is also the lowest, 46.4%, because escalation is not a resolution.
+
+The comparison that makes the point: the `secondary-only` baseline also resolves 46.4% of
+silent-fault episodes. Its unsafe rate is 53.6%. Identical accuracy, tenfold difference in what
+reaches production. Any evaluation reporting one number would rank these two agents the same.
+
+**The overconfidence gap widens on exactly the wrong slice.** Every model's mean-confidence-minus-
+accuracy gap is larger on silent faults than on clean data: `gpt-oss-20b` goes from +0.051 to
++0.275, `gpt-oss-120b` from +0.112 to +0.184, `qwen3-235b` from +0.030 to +0.147. Aggregate
+calibration would average that away against the clean and loud slices, which are the bulk of any
+run.
+
+### What this means for a gate
+
+A confidence threshold is only a control if AUROC on the degraded slice is meaningfully above 0.5,
+and on this benchmark it usually is not. The practical consequences:
+
+1. **Measure AUROC per fault condition before shipping a threshold**, not overall. The aggregate
+   numbers in the leaderboard column (0.412 for `kimi-k2`, 0.620 for `deepseek`) are dominated by
+   clean and loud episodes and would have hidden all of the above.
+2. **Prefer the deterministic signals.** `deepseek` reaches a 5.4% unsafe rate through flagging and
+   escalation, not through calibration. Structural checks and source disagreement did that work.
+3. **Do not port a threshold across models.** The five models here disagree about the sign of the
+   relationship, not just its magnitude.
+
 ## What the reference policies show, and what they cannot
 
 From the committed reference run, 624 episodes per policy, world seed 7, task seed 11, 16 tasks

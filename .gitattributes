@@ -1,0 +1,13 @@
+# Shell scripts must keep LF endings regardless of the checkout platform.
+#
+# Not cosmetic: a CRLF checkout of run_on_gpu.sh fails on the first line of the script with
+# "set: pipefail\r: invalid option name", which is a confusing way to lose a GPU rental.
+*.sh text eol=lf
+*.jinja text eol=lf
+
+# Committed results are read by tools, not edited by hand.
+*.jsonl text eol=lf
+*.json text eol=lf
+
+# SVG charts are diffed in pull requests, so keep them stable.
+*.svg text eol=lf

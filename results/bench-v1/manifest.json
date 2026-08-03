@@ -1,0 +1,108 @@
+{
+  "run_id": "bench-v1",
+  "world_seed": 7,
+  "task_seed": 11,
+  "tasks_per_type": 16,
+  "tasks": 64,
+  "repeats": 1,
+  "max_tool_calls": 18,
+  "conditions": [
+    "clean",
+    "timeout",
+    "http_500",
+    "rate_limit",
+    "malformed_json",
+    "schema_drift",
+    "auth_expired",
+    "empty_result",
+    "stale_record",
+    "truncated_list",
+    "wrong_entity",
+    "contradiction",
+    "unit_shift",
+    "injected_instruction"
+  ],
+  "task_types": [
+    "verify_entity",
+    "ubo_chain",
+    "revenue_eur",
+    "sanctions_screen"
+  ],
+  "episodes_planned": 4992,
+  "episodes_completed": 4992,
+  "budget_usd": 13.0,
+  "spent_usd": 11.4151,
+  "spend_by_model": {
+    "openai/gpt-oss-20b": 0.3116,
+    "openai/gpt-oss-120b": 0.4285,
+    "qwen/qwen3-235b-a22b-2507": 1.8739,
+    "deepseek/deepseek-chat-v3.1": 4.2195,
+    "moonshotai/kimi-k2-0905": 4.5808
+  },
+  "model_calls": 21087,
+  "stopped_on_budget": false,
+  "prices_usd_per_million": {
+    "openai/gpt-oss-20b": [
+      0.03,
+      0.13
+    ],
+    "openai/gpt-oss-120b": [
+      0.037,
+      0.17
+    ],
+    "qwen/qwen3-235b-a22b-2507": [
+      0.15,
+      0.598
+    ],
+    "deepseek/deepseek-chat-v3.1": [
+      0.25,
+      0.95
+    ],
+    "moonshotai/kimi-k2-0905": [
+      0.6,
+      2.5
+    ]
+  },
+  "agents": [
+    {
+      "label": "oracle",
+      "kind": "oracle",
+      "model": ""
+    },
+    {
+      "label": "naive",
+      "kind": "naive",
+      "model": ""
+    },
+    {
+      "label": "secondary-only",
+      "kind": "secondary-only",
+      "model": ""
+    },
+    {
+      "label": "gpt-oss-20b",
+      "kind": "openrouter",
+      "model": "openai/gpt-oss-20b"
+    },
+    {
+      "label": "gpt-oss-120b",
+      "kind": "openrouter",
+      "model": "openai/gpt-oss-120b"
+    },
+    {
+      "label": "qwen3-235b-a22b",
+      "kind": "openrouter",
+      "model": "qwen/qwen3-235b-a22b-2507"
+    },
+    {
+      "label": "deepseek-v3.1",
+      "kind": "openrouter",
+      "model": "deepseek/deepseek-chat-v3.1"
+    },
+    {
+      "label": "kimi-k2-0905",
+      "kind": "openrouter",
+      "model": "moonshotai/kimi-k2-0905"
+    }
+  ]
+}
