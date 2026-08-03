@@ -27,7 +27,9 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--output-dir", default="posttrain/out/adapter")
     parser.add_argument("--epochs", type=float, default=2.0)
     parser.add_argument("--lr", type=float, default=1e-4)
-    parser.add_argument("--max-length", type=int, default=8192)
+    # Measured on the real dataset with posttrain/validate_template.py: median 1,988 tokens,
+    # longest 2,447. 8192 was a guess and it costs memory and step time for nothing.
+    parser.add_argument("--max-length", type=int, default=4096)
     parser.add_argument("--batch-size", type=int, default=1)
     parser.add_argument("--grad-accum", type=int, default=8)
     parser.add_argument("--lora-rank", type=int, default=32)

@@ -108,6 +108,11 @@ stop_serving
 if [[ "${SKIP_TRAIN:-0}" != "1" ]]; then
   echo "=== building the dataset ==="
   python posttrain/build_dataset.py
+  # Fail before the optimiser starts rather than after. If the template cannot mask assistant
+  # turns, training would quietly put tool-result tokens under loss and the run would be worth
+  # nothing while still costing a full rental.
+  echo "=== validating the chat template ==="
+  python posttrain/validate_template.py --model "$MODEL"
   echo "=== training ==="
   python posttrain/train_qlora.py --model "$MODEL" --output-dir "$ADAPTER_DIR"
 fi
