@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="706" height="234" viewBox="0 0 706 234" role="img" aria-label="Resolved correctly, by fault family">
+
+  <style>
+    .bg { fill: #ffffff; }
+    .fg { fill: #1f2328; }
+    .muted { fill: #59636e; }
+    .grid { stroke: #d1d9e0; stroke-width: 1; }
+    .axis { stroke: #59636e; stroke-width: 1; }
+    text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #0d1117; }
+      .fg { fill: #e6edf3; }
+      .muted { fill: #9198a1; }
+      .grid { stroke: #30363d; }
+      .axis { stroke: #9198a1; }
+    }
+  </style>
+
+<rect class="bg" width="706" height="234"/>
+<text class="fg" x="14" y="26" font-size="14" font-weight="600">Resolved correctly, by fault family</text>
+<line class="grid" x1="150.0" y1="46" x2="150.0" y2="200"/>
+<text class="muted" x="150.0" y="216" font-size="10" text-anchor="middle">0%</text>
+<line class="grid" x1="265.0" y1="46" x2="265.0" y2="200"/>
+<text class="muted" x="265.0" y="216" font-size="10" text-anchor="middle">25%</text>
+<line class="grid" x1="380.0" y1="46" x2="380.0" y2="200"/>
+<text class="muted" x="380.0" y="216" font-size="10" text-anchor="middle">50%</text>
+<line class="grid" x1="495.0" y1="46" x2="495.0" y2="200"/>
+<text class="muted" x="495.0" y="216" font-size="10" text-anchor="middle">75%</text>
+<line class="grid" x1="610.0" y1="46" x2="610.0" y2="200"/>
+<text class="muted" x="610.0" y="216" font-size="10" text-anchor="middle">100%</text>
+<text class="fg" x="140" y="80.0" font-size="11" font-weight="600" text-anchor="end">naive</text>
+<rect x="150" y="50" width="460.0" height="11" rx="2" fill="#4269d0"/>
+<text class="muted" x="616.0" y="58" font-size="9.5">clean 100%</text>
+<rect x="150" y="65" width="150.9" height="11" rx="2" fill="#efb118"/>
+<text class="muted" x="306.9" y="73" font-size="9.5">loud 33%</text>
+<rect x="150" y="80" width="221.8" height="11" rx="2" fill="#ff725c"/>
+<text class="muted" x="377.8" y="88" font-size="9.5">silent 48%</text>
+<rect x="150" y="95" width="460.0" height="11" rx="2" fill="#6cc5b0"/>
+<text class="muted" x="616.0" y="103" font-size="9.5">adversarial 100%</text>
+<text class="fg" x="140" y="152.0" font-size="11" font-weight="600" text-anchor="end">oracle</text>
+<rect x="150" y="122" width="460.0" height="11" rx="2" fill="#4269d0"/>
+<text class="muted" x="616.0" y="130" font-size="9.5">clean 100%</text>
+<rect x="150" y="137" width="460.0" height="11" rx="2" fill="#efb118"/>
+<text class="muted" x="616.0" y="145" font-size="9.5">loud 100%</text>
+<rect x="150" y="152" width="460.0" height="11" rx="2" fill="#ff725c"/>
+<text class="muted" x="616.0" y="160" font-size="9.5">silent 100%</text>
+<rect x="150" y="167" width="460.0" height="11" rx="2" fill="#6cc5b0"/>
+<text class="muted" x="616.0" y="175" font-size="9.5">adversarial 100%</text>
+</svg>

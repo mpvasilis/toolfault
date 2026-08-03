@@ -1,4 +1,4 @@
-"""Command line interface."""
+﻿"""Command line interface."""
 
 from __future__ import annotations
 
@@ -152,6 +152,11 @@ def cmd_report(args: argparse.Namespace) -> int:
     summary = summarize(rows)
     out = args.out or str(Path(args.episodes).parent)
     paths = write_report(summary, out)
+    if not args.no_charts:
+        from .charts import write_charts
+
+        for chart in write_charts(summary, out):
+            print(str(chart))
     print(str(paths["report"]))
     return 0
 
@@ -253,6 +258,7 @@ def main(argv: list[str] | None = None) -> int:
     report = sub.add_parser("report", help="rebuild the report from an episodes.jsonl")
     report.add_argument("--episodes", required=True)
     report.add_argument("--out")
+    report.add_argument("--no-charts", action="store_true")
     report.set_defaults(func=cmd_report)
 
     replay = sub.add_parser("replay", help="print one saved trace")
