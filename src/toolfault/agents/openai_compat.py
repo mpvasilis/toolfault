@@ -1,4 +1,4 @@
-"""Adapter for any OpenAI-compatible chat-completions endpoint.
+﻿"""Adapter for any OpenAI-compatible chat-completions endpoint.
 
 Covers OpenAI, Together, Fireworks, Groq, and a local vLLM or SGLang server. The only
 provider-specific handling is the parameter naming quirk in the gpt-5 family, which is
@@ -55,10 +55,15 @@ class OpenAICompatAgent:
     base_url: str = "https://api.openai.com/v1"
     budget: Budget | None = None
     temperature: float = 0.0
-    max_output_tokens: int = 1200
+    # Generous by default because reasoning tokens count against this cap on several
+    # providers. At 1200 a reasoning model gets truncated before it emits a tool call, the
+    # harness sees an empty reply, and the episode ends as no_terminal: a config artefact
+    # scored as an agent failure. Raised after exactly that showed up in a probe run.
+    max_output_tokens: int = 4000
     timeout: float = 180.0
     max_retries: int = 5
     seed: int | None = 20260801
+    provider: str = ""
     name: str = field(default="")
     _client: httpx.Client | None = field(default=None, repr=False)
     last_error: str | None = field(default=None, repr=False)
@@ -144,7 +149,7 @@ class OpenAICompatAgent:
         prompt_tokens = int(usage.get("prompt_tokens") or 0)
         completion_tokens = int(usage.get("completion_tokens") or 0)
         if self.budget is not None:
-            self.budget.add(self.model, prompt_tokens, completion_tokens)
+            self.budget.add(self.model, prompt_tokens, completion_tokens, self.provider)
 
         choices = body.get("choices") or []
         if not choices:

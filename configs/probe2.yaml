@@ -1,0 +1,20 @@
+﻿run_id: probe2
+world_seed: 7
+task_seed: 11
+tasks_per_type: 1
+repeats: 1
+max_tool_calls: 18
+budget_usd: 0.60
+workers: 4
+save_traces: none
+out_dir: runs
+conditions: [clean]
+agents:
+  - kind: openrouter
+    model: openai/gpt-5-mini
+    label: gpt-5-mini
+    max_output_tokens: 8000
+  - kind: openrouter
+    model: openai/gpt-oss-120b
+    label: gpt-oss-120b
+    max_output_tokens: 6000

@@ -1,4 +1,4 @@
-"""Grid runner: agents x tasks x conditions, with a hard spend ceiling."""
+﻿"""Grid runner: agents x tasks x conditions, with a hard spend ceiling."""
 
 from __future__ import annotations
 
@@ -13,6 +13,13 @@ from pathlib import Path
 from typing import Any
 
 from .agents.base import Agent
+from .agents.degenerate import (
+    AlwaysEscalateAgent,
+    ConfidentGuessAgent,
+    ModalAnswerAgent,
+    OneCallAgent,
+    SecondarySourceOnlyAgent,
+)
 from .agents.openai_compat import OpenAICompatAgent
 from .agents.scripted import NaiveAgent, OracleAgent
 from .budget import Budget, BudgetExceeded, estimate_run_cost, price_for
@@ -24,6 +31,7 @@ from .world import World, build_world
 PROVIDERS = {
     "openai": ("https://api.openai.com/v1", "OPENAI_API_KEY"),
     "together": ("https://api.together.xyz/v1", "TOGETHER_API_KEY"),
+    "openrouter": ("https://openrouter.ai/api/v1", "OPENROUTER_API_KEY"),
     "huggingface": ("https://router.huggingface.co/v1", "HF_TOKEN"),
     "fireworks": ("https://api.fireworks.ai/inference/v1", "FIREWORKS_API_KEY"),
     "groq": ("https://api.groq.com/openai/v1", "GROQ_API_KEY"),
@@ -39,13 +47,21 @@ class AgentSpec:
     base_url: str = ""
     api_key_env: str = ""
     temperature: float = 0.0
-    max_output_tokens: int = 1200
+    max_output_tokens: int = 4000
 
     def resolved_label(self) -> str:
         return self.label or self.model or self.kind
 
     def is_paid(self) -> bool:
-        return self.kind not in ("oracle", "naive")
+        return self.kind not in (
+            "oracle",
+            "naive",
+            "always-escalate",
+            "modal-answer",
+            "one-call",
+            "confident-guess",
+            "secondary-only",
+        )
 
 
 @dataclass
@@ -84,6 +100,16 @@ def make_agent(spec: AgentSpec, budget: Budget) -> Agent:
         return OracleAgent()
     if spec.kind == "naive":
         return NaiveAgent()
+    if spec.kind == "always-escalate":
+        return AlwaysEscalateAgent()
+    if spec.kind == "modal-answer":
+        return ModalAnswerAgent()
+    if spec.kind == "one-call":
+        return OneCallAgent()
+    if spec.kind == "confident-guess":
+        return ConfidentGuessAgent()
+    if spec.kind == "secondary-only":
+        return SecondarySourceOnlyAgent()
     base_url, key_env = PROVIDERS.get(spec.kind, ("", ""))
     base_url = spec.base_url or base_url
     key_env = spec.api_key_env or key_env
@@ -99,6 +125,7 @@ def make_agent(spec: AgentSpec, budget: Budget) -> Agent:
         budget=budget,
         temperature=spec.temperature,
         max_output_tokens=spec.max_output_tokens,
+        provider=spec.kind,
         name=spec.resolved_label(),
     )
 
@@ -129,7 +156,7 @@ def run_grid(config: RunConfig, *, verbose: bool = True) -> dict[str, Any]:
         print(f"[toolfault] world seed {config.world_seed}, {len(tasks)} tasks, {len(cells)} episodes", file=sys.stderr)
         if paid_specs:
             per_model = paid_cells // max(1, len(paid_specs))
-            estimate = estimate_run_cost([s.model for s in paid_specs], per_model)
+            estimate = estimate_run_cost([(s.model, s.kind) for s in paid_specs], per_model)
             print(
                 f"[toolfault] {paid_cells} paid episodes, estimated "
                 f"${estimate['__total__']:.2f}, ceiling ${config.budget_usd:.2f}",
@@ -159,6 +186,7 @@ def run_grid(config: RunConfig, *, verbose: bool = True) -> dict[str, Any]:
                 agent,
                 run_id=config.run_id,
                 model=spec.model or spec.kind,
+                provider=spec.kind,
                 max_tool_calls=config.max_tool_calls,
             )
         finally:
@@ -245,7 +273,7 @@ def run_grid(config: RunConfig, *, verbose: bool = True) -> dict[str, Any]:
         "stopped_on_budget": stopped,
         # The price table travels with the numbers it produced, because prices move.
         "prices_usd_per_million": {
-            spec.model: list(price_for(spec.model))
+            spec.model: list(price_for(spec.model, spec.kind))
             for spec in config.agents
             if spec.is_paid() and spec.model
         },

@@ -1,4 +1,4 @@
-"""Token pricing and a hard spend ceiling.
+﻿"""Token pricing and a hard spend ceiling.
 
 The ceiling is checked before every model call, not after, so an overnight run cannot
 quietly spend more than it was told to. Prices are USD per million tokens and are
@@ -43,22 +43,43 @@ PRICES: dict[str, tuple[float, float]] = {
     "deepseek-ai/DeepSeek-V4-Pro": (1.74, 3.48),
     "meta-llama/Llama-4-Scout-17B-16E-Instruct": (0.18, 0.59),
     "MiniMaxAI/MiniMax-M2.7": (0.30, 1.20),
+    # OpenRouter, read from its /v1/models endpoint on 2026-08-01. Keys are qualified with
+    # the provider because the same model is not the same price everywhere: gpt-oss-20b is
+    # $0.05/$0.20 on Together and $0.030/$0.130 here, and an unqualified lookup would report
+    # whichever it found first.
+    "openai/gpt-oss-20b@openrouter": (0.030, 0.130),
+    "openai/gpt-oss-120b@openrouter": (0.037, 0.170),
+    "qwen/qwen3-235b-a22b-2507@openrouter": (0.150, 0.598),
+    "qwen/qwen3-max@openrouter": (0.780, 3.900),
+    "deepseek/deepseek-chat-v3.1@openrouter": (0.250, 0.950),
+    "moonshotai/kimi-k2-0905@openrouter": (0.600, 2.500),
+    "z-ai/glm-4.6@openrouter": (0.500, 2.000),
+    "google/gemini-2.5-flash@openrouter": (0.300, 2.500),
+    "anthropic/claude-haiku-4.5@openrouter": (1.000, 5.000),
+    "mistralai/mistral-medium-3.1@openrouter": (0.400, 2.000),
+    "openai/gpt-5-mini@openrouter": (0.250, 2.000),
 }
 
 UNKNOWN_PRICE = (1.00, 3.00)
 
 
-def price_for(model: str) -> tuple[float, float]:
+def price_for(model: str, provider: str = "") -> tuple[float, float]:
+    """Price for a model, preferring the provider-qualified entry.
+
+    Falls back to UNKNOWN_PRICE rather than guessing, so an unpriced model shows up as an
+    upper bound in the manifest instead of quietly reporting someone else's rate.
+    """
+    if provider and f"{model}@{provider}" in PRICES:
+        return PRICES[f"{model}@{provider}"]
     if model in PRICES:
         return PRICES[model]
-    for key, value in PRICES.items():
-        if key.endswith(model) or model.endswith(key):
-            return value
     return UNKNOWN_PRICE
 
 
-def cost_usd(model: str, prompt_tokens: int, completion_tokens: int) -> float:
-    prompt_price, completion_price = price_for(model)
+def cost_usd(
+    model: str, prompt_tokens: int, completion_tokens: int, provider: str = ""
+) -> float:
+    prompt_price, completion_price = price_for(model, provider)
     return (prompt_tokens * prompt_price + completion_tokens * completion_price) / 1_000_000
 
 
@@ -81,8 +102,10 @@ class Budget:
                 f"spend ceiling reached: ${self.spent_usd:.4f} of ${self.limit_usd:.2f}"
             )
 
-    def add(self, model: str, prompt_tokens: int, completion_tokens: int) -> float:
-        delta = cost_usd(model, prompt_tokens, completion_tokens)
+    def add(
+        self, model: str, prompt_tokens: int, completion_tokens: int, provider: str = ""
+    ) -> float:
+        delta = cost_usd(model, prompt_tokens, completion_tokens, provider)
         self.spent_usd += delta
         self.calls += 1
         self.per_model[model] = self.per_model.get(model, 0.0) + delta
@@ -93,7 +116,7 @@ class Budget:
 
 
 def estimate_run_cost(
-    models: list[str],
+    models: list[tuple[str, str]],
     episodes_per_model: int,
     avg_prompt_tokens: int = 5200,
     avg_completion_tokens: int = 420,
@@ -106,11 +129,12 @@ def estimate_run_cost(
     """
     out: dict[str, float] = {}
     total = 0.0
-    for model in models:
+    for model, provider in models:
         per_episode = cost_usd(
             model,
             avg_prompt_tokens * avg_model_calls_per_episode,
             avg_completion_tokens * avg_model_calls_per_episode,
+            provider,
         )
         model_total = per_episode * episodes_per_model
         out[model] = model_total

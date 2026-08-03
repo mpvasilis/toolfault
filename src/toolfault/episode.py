@@ -1,4 +1,4 @@
-"""The episode loop: one task, one condition, one agent, one trace."""
+﻿"""The episode loop: one task, one condition, one agent, one trace."""
 
 from __future__ import annotations
 
@@ -103,6 +103,7 @@ def run_episode(
     *,
     run_id: str = "local",
     model: str = "",
+    provider: str = "",
     max_tool_calls: int = MAX_TOOL_CALLS,
 ) -> Episode:
     injector = FaultInjector(
@@ -202,7 +203,9 @@ def run_episode(
             break
 
     episode.wall_seconds = round(time.perf_counter() - started, 3)
-    episode.cost_usd = cost_usd(model, episode.prompt_tokens, episode.completion_tokens)
+    episode.cost_usd = cost_usd(
+        model, episode.prompt_tokens, episode.completion_tokens, provider
+    )
     episode.tool_call_count = len(registry.calls)
     episode.distinct_tools = len({c["tool"] for c in registry.calls})
     episode.fault_fired = injector.fired

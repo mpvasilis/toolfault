@@ -1,42 +1,56 @@
 # The published grid.
 #
-# Five current open-weight models spanning 20B to frontier, plus the two free reference
-# policies that bound the scale from both ends. Every model here is open weight and served
-# by a provider anyone can sign up to, so the whole leaderboard is reproducible by a
-# stranger with a key and twenty dollars. That is not a small property for a benchmark.
+# Five open-weight models spanning 20B to frontier, served through OpenRouter, plus the
+# reference and degenerate baselines in the same run so the leaderboard is one table with the
+# ceiling and the floor on it.
 #
-# 16 tasks per type gives 64 tasks and about 620 episodes per agent once the per-task
-# condition support is applied. The rarest conditions land around n = 10 per model, which is
-# thin: those cells are reported with their Wilson intervals and should be read as
-# directional. The conditions that carry the headline (contradiction, truncated_list,
-# unit_shift, wrong_entity) sit between n = 16 and n = 32.
+# Every model here is open weight and reachable through a public API, so the whole leaderboard
+# is reproducible by a stranger with a key and about thirteen dollars. That is not a small
+# property for a benchmark, and it is the reason no closed model is in the published grid.
+#
+# Sizing: 16 tasks per type gives 64 tasks and about 624 episodes per agent once per-task
+# condition support is applied. Per-episode cost was measured per model in a probe run rather
+# than estimated, and the ceiling below carries roughly a dollar of headroom over the estimate.
+# The budget is checked before every model call, so an overrun stops the run rather than the
+# card.
+#
+# max_output_tokens is set high on purpose. At 1200 the reasoning models were truncated before
+# they could emit a tool call, the harness saw an empty reply, and episodes ended as no_terminal.
+# gpt-5-mini scored 0 of 4 on clean data for that reason alone, which would have been a wrong
+# row about a real model rather than a measurement of it.
 run_id: bench-v1
 world_seed: 7
 task_seed: 11
 tasks_per_type: 16
 repeats: 1
 max_tool_calls: 18
-budget_usd: 23.00
-workers: 24
+budget_usd: 13.00
+workers: 20
 save_traces: failures
-trace_sample: 0.15
+trace_sample: 0.12
 out_dir: results
 
 agents:
   - kind: oracle
   - kind: naive
-  - kind: together
+  - kind: secondary-only
+  - kind: openrouter
     model: openai/gpt-oss-20b
     label: gpt-oss-20b
-  - kind: together
+    max_output_tokens: 6000
+  - kind: openrouter
     model: openai/gpt-oss-120b
     label: gpt-oss-120b
-  - kind: together
-    model: Qwen/Qwen3.7-Plus
-    label: Qwen3.7-Plus
-  - kind: together
-    model: zai-org/GLM-4.7
-    label: GLM-4.7
-  - kind: together
-    model: Qwen/Qwen3.7-Max
-    label: Qwen3.7-Max
+    max_output_tokens: 6000
+  - kind: openrouter
+    model: qwen/qwen3-235b-a22b-2507
+    label: qwen3-235b-a22b
+    max_output_tokens: 4000
+  - kind: openrouter
+    model: deepseek/deepseek-chat-v3.1
+    label: deepseek-v3.1
+    max_output_tokens: 4000
+  - kind: openrouter
+    model: moonshotai/kimi-k2-0905
+    label: kimi-k2-0905
+    max_output_tokens: 4000
