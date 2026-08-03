@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+﻿#!/usr/bin/env bash
 # The whole post-training experiment, start to finish, on one rented GPU box.
 #
 #   base model  -> serve -> evaluate on the benchmark
@@ -14,6 +14,9 @@
 set -euo pipefail
 
 MODEL="${MODEL:-Qwen/Qwen3-4B-Instruct-2507}"
+# Set MODEL to a local directory to skip the hub entirely. Worth doing: a rented box shares its
+# address with other tenants, so unauthenticated hub requests are often already rate limited,
+# and Hugging Face xet transfers failed outright on the host used for the first run.
 ADAPTER_DIR="${ADAPTER_DIR:-posttrain/out/adapter}"
 RESULTS_DIR="${RESULTS_DIR:-results}"
 TASKS_PER_TYPE="${TASKS_PER_TYPE:-16}"
@@ -82,7 +85,7 @@ task_seed: 11
 tasks_per_type: ${TASKS_PER_TYPE}
 repeats: 1
 max_tool_calls: 18
-budget_usd: 0
+budget_usd: 0   # self-hosted inference is not metered
 workers: 8
 save_traces: failures
 trace_sample: 0.2

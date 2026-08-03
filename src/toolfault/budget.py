@@ -69,6 +69,11 @@ def price_for(model: str, provider: str = "") -> tuple[float, float]:
     Falls back to UNKNOWN_PRICE rather than guessing, so an unpriced model shows up as an
     upper bound in the manifest instead of quietly reporting someone else's rate.
     """
+    # Self-hosted inference has no per-token price. Reporting one would be fiction, and
+    # pricing a local vLLM server at the UNKNOWN_PRICE fallback would make a free run look
+    # like it cost tens of dollars.
+    if provider == "local":
+        return (0.0, 0.0)
     if provider and f"{model}@{provider}" in PRICES:
         return PRICES[f"{model}@{provider}"]
     if model in PRICES:
@@ -97,6 +102,11 @@ class Budget:
     per_model: dict[str, float] = field(default_factory=dict)
 
     def check(self) -> None:
+        # A ceiling at or below zero means there is nothing to meter, which is the case for a
+        # self-hosted server. Without this, a run against a local vLLM instance aborted on its
+        # first call because spent (0) was already equal to the limit (0).
+        if self.limit_usd <= 0:
+            return
         if self.spent_usd >= self.limit_usd:
             raise BudgetExceeded(
                 f"spend ceiling reached: ${self.spent_usd:.4f} of ${self.limit_usd:.2f}"
