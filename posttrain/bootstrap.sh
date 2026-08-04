@@ -28,6 +28,19 @@ exec > >(tee -a "$LOG") 2>&1
 echo "=== bootstrap starting $(date -u +%FT%TZ) ==="
 nvidia-smi --query-gpu=name,memory.total,driver_version --format=csv,noheader
 
+echo "=== build tools ==="
+# Triton JIT-compiles attention kernels at first use and needs a C compiler. The pytorch
+# -runtime images do not ship one, and vLLM fails deep inside its memory-profiling pass with
+# "Failed to find C compiler" rather than anything that points at the real problem. The -devel
+# image has gcc but is roughly twice the pull, and on a rented box the pull is the slow part,
+# so installing gcc onto the smaller image is the better trade.
+if ! command -v cc >/dev/null; then
+  apt-get update -qq
+  DEBIAN_FRONTEND=noninteractive apt-get install -y -qq build-essential
+fi
+export CC=cc
+cc --version | head -1
+
 echo "=== clone ==="
 cd "$WORK"
 rm -rf toolfault
