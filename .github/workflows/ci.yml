@@ -19,9 +19,16 @@ jobs:
       - uses: astral-sh/setup-uv@v5
         with:
           enable-cache: true
+          python-version: ${{ matrix.python-version }}
 
+      # Into a venv rather than --system. The runner's interpreter is externally managed, so
+      # installing into it fails outright, and --break-system-packages is a worse answer than
+      # simply not touching the system Python.
       - name: Install
-        run: uv pip install --system -e ".[dev]"
+        run: |
+          uv venv
+          uv pip install -e ".[dev]"
+          echo "$PWD/.venv/bin" >> "$GITHUB_PATH"
 
       - name: Lint
         run: ruff check .
@@ -29,15 +36,15 @@ jobs:
       - name: Tests
         run: pytest -q
 
-      # The benchmark runs end to end on every push, with no API key and no cost, and
-      # fails the build if the reference policy stops resolving every condition. A
-      # benchmark whose ceiling drifts silently is worse than no benchmark.
+      # The benchmark runs end to end on every push, with no API key and no cost, and fails the
+      # build if the reference policy stops resolving every condition. A benchmark whose ceiling
+      # drifts silently is worse than no benchmark.
       - name: Solvability gate
         run: toolfault selftest --tasks-per-type 8 --quiet
 
-      # The other half of the argument: the floor. If a policy that does no verification
-      # starts scoring well, or if reading only the corroborating sources beats the
-      # primary ones again, the benchmark has stopped measuring what it claims to.
+      # The other half of the argument: the floor. If a policy that does no verification starts
+      # scoring well, or if reading only the corroborating sources beats the primary ones again,
+      # the benchmark has stopped measuring what it claims to.
       - name: Not-gameable gate
         run: pytest tests/test_not_gameable.py -q
 
