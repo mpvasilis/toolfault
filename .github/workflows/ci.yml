@@ -24,9 +24,11 @@ jobs:
       # Into a venv rather than --system. The runner's interpreter is externally managed, so
       # installing into it fails outright, and --break-system-packages is a worse answer than
       # simply not touching the system Python.
+      # --clear because setup-uv already creates a .venv when it is given a python-version,
+      # and uv venv refuses to write over an existing one.
       - name: Install
         run: |
-          uv venv
+          uv venv --clear
           uv pip install -e ".[dev]"
           echo "$PWD/.venv/bin" >> "$GITHUB_PATH"
 
