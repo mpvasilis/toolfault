@@ -146,7 +146,44 @@ p = Y)" is a better artifact than silence, and it is the honest shape of most tr
 
 ## Cost
 
-One 4090 at roughly $0.35/hour on a spot marketplace. Dataset generation is CPU-only and free.
-Expect two to three hours end to end including both evaluation arms, so a few euros.
+One 3090 or 4090 at roughly $0.11 to $0.35/hour on a spot marketplace, plus disk. Dataset
+generation is CPU-only and free. Expect two to three hours end to end including both evaluation
+arms, so a few euros.
 
 Debug the whole stack on the cheapest card available before touching anything expensive.
+
+## Environment, the parts that actually matter
+
+Written down because each of these cost a rental attempt, and none of them is discoverable from
+the error message alone.
+
+**Match vLLM to the image's CUDA, or use the official vLLM image.** On a
+`pytorch/pytorch:2.7.1-cuda12.8-cudnn9-runtime` base, an unpinned `pip install vllm` replaces the
+image's `torch 2.7.1+cu128` with `torch 2.11.0+cu130`. vLLM then wants a CUDA 13 toolkit that the
+image does not have, and the failure arrives from deep inside its memory-profiling pass as
+`Failed to find C compiler`, then `libnvrtc.so.13: cannot open shared object file`, then
+`Could not find nvcc`. None of those name the real problem. Use `vllm/vllm-openai` as the base, or
+pin vLLM to a release whose torch matches the image.
+
+**`-runtime` images have no C compiler.** Triton JIT-compiles attention kernels at first use and
+needs `gcc`. `-devel` has it but is roughly twice the pull, and on a rented box the pull is the
+slow part, so `bootstrap.sh` installs `build-essential` onto the smaller image. Note that
+`--enforce-eager` does *not* remove this requirement.
+
+**Fetch the model separately, with retries, and disable xet.** A rented box shares its address
+with every other tenant, so unauthenticated Hugging Face requests are often already rate limited
+(`0/500 requests remaining`). Separately, the xet storage backend fails on some hosts with a
+transport error rather than a retryable HTTP status, so `HF_HUB_DISABLE_XET=1` is set and
+ModelScope is the fallback. Pulling the snapshot before serving keeps this out of the serving path
+entirely.
+
+**Self-hosted inference is not metered, and the harness has to know that.** A generated local
+config sets `budget_usd: 0`, and a spend ceiling of zero used to mean the very first call aborted
+because spent already equalled the limit. A ceiling at or below zero now means unmetered, and
+`price_for` returns zero for the `local` provider rather than falling through to the unknown-price
+upper bound, which would have reported a free run as costing tens of dollars.
+
+**Marketplace hosts fail.** Of four instances rented, one stalled indefinitely on a single Docker
+layer and one went offline mid-run. Neither is a code problem. Budget an attempt or two, keep the
+total spend small per attempt, and destroy instances explicitly rather than trusting an in-container
+watchdog: nothing running inside the container can stop the billing.

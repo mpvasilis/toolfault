@@ -47,10 +47,17 @@ serve() {
   echo "=== serving ${name} ==="
   # Adapter served rather than merged. Merging a 4-bit base dequantizes it to bf16, and the
   # arm being measured is the adapter, not a requantization of the base.
+  # --enforce-eager on purpose. vLLM's default compiled path sends Triton to build kernels at
+  # startup, which needs the CUDA toolkit (nvcc and libnvrtc). A pytorch -runtime image has
+  # neither, and the failure surfaces as "Failed to find C compiler" and then
+  # "libnvrtc.so.13: cannot open shared object file" from deep inside the memory-profiling
+  # pass. Eager mode costs throughput that this workload does not need: a 4B model answering a
+  # few hundred short episodes is not throughput bound.
   vllm serve "$MODEL" \
     --port "$PORT" \
     --max-model-len "$MAX_LEN" \
     --gpu-memory-utilization 0.85 \
+    --enforce-eager \
     --enable-auto-tool-choice \
     --tool-call-parser hermes \
     "$@" > "vllm-${name}.log" 2>&1 &
