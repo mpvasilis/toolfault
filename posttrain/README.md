@@ -1,121 +1,135 @@
-# Post-training: can a verification procedure be distilled, and does it generalise?
+# Post-training experiment
 
-A reproducible fine-tuning experiment on the benchmark in this repo. It is pre-registered: the
-splits are frozen and the predictions are written into the dataset manifest before training runs,
-so the results can be read against what was expected rather than against what turned out
-convenient.
+**Status — preprocessing validated. GPU training and matched base/adapter evaluation are
+pending.** Dataset generation and the CPU tokenizer preflight have been run. This document
+reports those checks and the planned evaluation protocol. It contains no measured
+fine-tuning improvement.
 
-**Status: built and pre-registered, not yet run.** The dataset builder works and its output is
-described below from a real run. The training and evaluation scripts are written and not executed;
-there are no results in this document, and there will not be until there are.
+The experiment asks whether supervised fine-tuning on selected fault types improves recovery
+on fault types excluded from training. Both the benefit of training and the extent of transfer
+are open questions. The fault split and qualitative hypotheses are recorded in
+[`data/manifest.json`](data/manifest.json) before training.
 
-## The question
+## Reference-policy demonstrations
 
-Not "does SFT improve the score". It does, and that would not be worth the GPU hour.
+The `oracle` policy supplies demonstrations. It resolves every episode in the evaluated
+reference grids using the available tools, and its recovery branches are inspectable in
+[`scripted.py`](../src/toolfault/agents/scripted.py). Dataset generation runs on CPU without
+model API calls. The builder excludes unresolved demonstrations and reports their count.
 
-**Does training on some fault types teach a general verification procedure, or only the specific
-recoveries that were demonstrated?**
+## Splits and hypotheses
 
-That distinction is the whole value. A model that learned to cross-check `get_filings` against the
-filed document has learned a lookup. A model that then cross-checks a source it was never shown
-being cross-checked has learned something closer to skepticism. Only the second is worth deploying,
-and only a held-out fault split can tell them apart.
+Eight conditions are used for training, including `clean`. Six fault conditions are held out.
+The held-out set is selected to probe specific kinds of transfer.
 
-## The teacher is the reference policy, not a frontier model
-
-The `oracle` policy generates the training data. Three reasons, and the third is the real one:
-
-1. It is better than any model at this specific task, resolving all 14 conditions at 1.0.
-2. It is free, so the experiment costs a GPU hour rather than an API budget.
-3. It is inspectable line by line. When a demonstration looks wrong it traces to a branch in
-   `agents/scripted.py`, not to a sampling temperature.
-
-## The splits, frozen before training
-
-**Fault split.** Eight conditions train, six are held out. The held-out set is chosen so each cell
-tests a different kind of transfer, not sampled at random:
-
-| held out | family | what it tests | prediction |
+| Held out | Family | Transfer question | Hypothesis recorded before training |
 |---|---|---|---|
-| `rate_limit` | loud | near transfer: new error code, trained recovery | recovers |
-| `schema_drift` | loud | a recovery mode absent from training (`tolerate`) | little or no gain |
-| `stale_record` | silent | new tell, trained recovery (`second_source`) | partial gain |
-| `contradiction` | silent | novel trigger for a trained action (escalation) | the interesting cell |
-| `unit_shift` | silent | new magnitude tell, trained recovery | partial gain |
-| `injected_instruction` | adversarial | an entire family never seen | little or no gain |
+| `rate_limit` | loud | Can retry behavior transfer to a new error code? | recovery transfers |
+| `schema_drift` | loud | Can the model handle a recovery mode absent from demonstrations? | little or no gain |
+| `stale_record` | silent | Can a demonstrated recovery transfer to a new warning sign? | partial gain |
+| `contradiction` | silent | Can escalation transfer to a new trigger? | evaluate escalation transfer |
+| `unit_shift` | silent | Can cross-checking transfer to a new magnitude error? | partial gain |
+| `injected_instruction` | adversarial | Can behavior transfer to an excluded fault family? | little or no gain |
 
-`auth_expired` stays in training deliberately. It is the only trained condition where escalating is
-the correct action. Without it, `contradiction` would be asking the model to invent an action it has
-never been shown, which tests nothing.
+`auth_expired` remains in training to provide examples in which escalation is the correct
+action. This makes the `contradiction` condition a test of transferring that action to a
+different trigger.
 
-**World split.** Training traces come from world seeds 23, 29 and 31. The benchmark is world seed 7.
-No company name, person id, officer name, filing amount or identifier is shared, so a model cannot
-score by memorising the registry. `build_dataset.py` refuses to run if the two overlap.
+**World split.** Training uses world seeds 23, 29 and 31. Evaluation uses world seed 7.
+The builder rejects a training seed equal to the declared benchmark seed. Different seeds
+change the registry, but do not guarantee disjoint names, identifiers or values. Identifier
+formats and the underlying world generator remain shared.
 
-**Validation split by task id, never by episode.** Splitting by episode would put the same company
-in train and validation under two different faults, and the validation loss would be measuring
-memorisation.
+**Validation split.** All retained episodes for a world-prefixed task ID belong to the same
+split. This prevents the same task from appearing in both training and validation under
+different conditions. Related entities can still occur in different tasks, so validation
+loss is not an independent-world generalisation result.
 
-## The dataset, as actually built
+## Reproduced dataset
+
+Run commands from the repository root.
 
 ```bash
 python posttrain/build_dataset.py
 ```
 
-2,736 demonstrations across three worlds, capped at 110 per condition, giving **777 train and 89
-validation examples** with sha256 digests in `data/manifest.json`.
+The default build produces 2,733 demonstrations across three worlds. A cap of 110 examples
+per condition is applied before splitting, producing **765 training and 98 validation
+examples**.
 
-| condition | examples |
+| Training condition | Examples |
 |---|---|
 | `truncated_list` | 105 |
-| `malformed_json` | 104 |
-| `auth_expired` | 100 |
-| `timeout` | 100 |
-| `http_500` | 96 |
-| `clean` | 93 |
-| `wrong_entity` | 93 |
-| `empty_result` | 86 |
+| `malformed_json` | 101 |
+| `auth_expired` | 96 |
+| `timeout` | 96 |
+| `http_500` | 94 |
+| `clean` | 98 |
+| `wrong_entity` | 92 |
+| `empty_result` | 83 |
 
-The cap matters. Uncapped, the mix came out 88% loud faults, because every task supports every loud
-fault while the silent ones need a particular state of the world. A model trained on that mix learns
-to retry, which is the cheap half of the behaviour. Capping moves the silent share from 12% to 37%.
-95 of the 777 demonstrations end in an escalation.
+Silent faults account for 280 of 765 training examples, or 36.6%. There are 91 training
+demonstrations ending in escalation. The cap limits the contribution of conditions supported
+by many tasks.
 
-The JSONL is gitignored: it is 8 MB and regenerable from two seeds, and the manifest carries the
-digests to verify a regenerated copy against.
+The JSONL files are gitignored and can be regenerated from the recorded world, task and split
+seeds. The manifest records SHA-256 prefixes over the ordered message payloads. The reproduced
+training digest is `2d1d01bbeab421f8` and the validation digest is `f351c0742ba1b3c1`.
 
-## Training
+## CPU preflight and provenance
 
-QLoRA on one 24 GB card. Defaults target `Qwen/Qwen3-4B-Instruct-2507` in 4-bit nf4, rank 32,
-alpha 64, 8192-token context, 2 epochs.
+The preflight checks that conversations render, assistant masks are nonempty, supervised tool
+calls and arguments match the source, tool-response markers are excluded from supervised
+text, and all sequences fit the selected context length.
+
+```bash
+python posttrain/validate_template.py --model Qwen/Qwen3-4B-Instruct-2507
+python posttrain/validate_template.py --model Qwen/Qwen3-4B-Instruct-2507 \
+  --data posttrain/data/val.jsonl
+```
+
+The completed CPU check used `transformers==5.22.2`, tokenizer files from
+`Qwen/Qwen3-4B-Instruct-2507` at revision
+`cdbee75f17c01a7cc42f958dc650907174af0554`, and TRL's
+`qwen3_instruct_2507_training.jinja` at commit
+`e5677dace3f8ab512ab40ba95fe8a887f5d37a45`. All **863 conversations** passed. The longest
+sequence was **3,033 tokens**, below the 4,096-token training limit. The median supervised
+share in training was **8.1%**.
+
+These revisions describe the completed check. The default commands resolve model and template
+versions through the installed libraries. To reproduce the same artifacts, use the pinned
+tokenizer files as a local `--model` directory and pass the pinned template with `--template`
+to both validators and the trainer. The runner forwards `TRAINING_TEMPLATE` to all three
+commands. The CPU preflight does not validate GPU training or serving compatibility.
+
+## Planned training
+
+Defaults target `Qwen/Qwen3-4B-Instruct-2507` with QLoRA, 4-bit NF4 weights, rank 32,
+alpha 64, a 4,096-token training context and two epochs. A single 24 GB GPU is the intended
+target. Peak memory use and runtime remain to be measured.
 
 ```bash
 python posttrain/train_qlora.py --model Qwen/Qwen3-4B-Instruct-2507
 ```
 
-Loss is applied to assistant turns only. This matters more here than in most SFT setups: roughly
-70% of the tokens in one of these conversations are tool results, and training on them teaches the
-model to predict registry payloads rather than to decide what to do about them. The script asks TRL
-for the training variant of the model's chat template and **fails loudly if there is not one**
-rather than silently training on everything; `--allow-full-loss` overrides that, and using it
-changes what the experiment measures.
+Loss is applied to assistant turns. Pass the same `--template` used in preflight when selecting
+an explicit template. `--allow-full-loss` permits training on the complete sequence when an
+assistant-only template cannot be selected. That changes the objective and must be reported
+as a separate experimental configuration.
 
-## Evaluation
+## Planned evaluation
 
-Both arms are served with vLLM on the same box and evaluated by the same harness against the same
-world seed and task seed. The only difference between them is the adapter.
+The runner serves both arms with vLLM and uses the same harness, world seed 7, task seed 11,
+task count and serving configuration. The tuned arm loads the adapter through LoRA support.
+It does not merge and requantize the model.
 
 ```bash
-bash posttrain/run_on_gpu.sh
+RUN_PREFIX=posttrain bash posttrain/run_on_gpu.sh
 ```
 
-That script serves the base model, evaluates it, builds the dataset, trains, serves the adapter,
-evaluates again, and writes the comparison. It arms a watchdog that destroys the instance after
-`HARD_STOP_MINUTES` (default 240) regardless of what state the run is in, because an idle rented
-GPU still bills.
-
-The adapter is served rather than merged. Merging into a 4-bit base dequantizes it to bf16, and the
-arm being measured is the adapter, not a requantization of the base.
+The script evaluates the base model, builds the dataset, validates both splits, trains,
+evaluates the adapter and writes the comparison. Set a fresh `RUN_PREFIX` for each experiment.
+The default is a timestamped prefix. `SKIP_TRAIN=1` evaluates an existing adapter.
 
 ```bash
 python posttrain/compare.py \
@@ -123,67 +137,43 @@ python posttrain/compare.py \
   --tuned results/posttrain-tuned/episodes.jsonl
 ```
 
-`compare.py` splits every number by trained against held-out conditions, pairs on task id, runs a
-sign-flip permutation test per condition, and BH-corrects across the grid. It prints the
-pre-registered prediction next to each measured delta.
+`compare.py` requires matching episode identities and task ground truth. It reports endpoint
+errors and excludes affected pairs from both arms. It separates trained and held-out
+conditions, pairs results by task, and reports sign-flip permutation tests with
+Benjamini–Hochberg correction. Report resolution, unsafe submission, escalation and confidence
+metrics together, including pair counts and excluded errors.
 
-## How to read the outcome
+## Interpreting the results
 
-- **Gain on trained conditions only.** The model memorised specific recoveries. Honest, publishable,
-  and the least interesting result.
-- **Gain on trained conditions and on `rate_limit` and `stale_record`.** Recoveries transfer to new
-  triggers within a mode that was demonstrated. The useful result.
-- **Gain on `contradiction`.** Escalation transferred to a trigger never shown. The strongest
-  available result from this design.
-- **Gain on `schema_drift` or `injected_instruction`.** Would contradict the prediction, since
-  neither recovery mode appears in training at all. Would need explaining rather than celebrating.
-- **A rise in the unsafe rate alongside a rise in accuracy.** A regression, and the reason
-  `unsafe` is tracked separately from accuracy.
+- Gains confined to trained conditions would provide limited evidence of transfer.
+- Gains on `rate_limit`, `stale_record` or `unit_shift` would support transfer to new triggers
+  within the evaluated recovery patterns.
+- Gains on `contradiction` would support transfer of escalation to a new trigger.
+- Gains on `schema_drift` or `injected_instruction` would differ from the recorded hypotheses
+  and warrant inspection of traces and alternative explanations.
+- Higher resolution accompanied by more unsafe submissions would expose a safety tradeoff.
+- Null results should include effect estimates, uncertainty and sample sizes. A nonsignificant
+  test alone does not establish the absence of an effect.
 
-A null result is fully publishable and is planned for. "SFT on eight fault conditions moved
-resolution on those conditions by X and did not move the six held-out conditions (permutation
-p = Y)" is a better artifact than silence, and it is the honest shape of most transfer experiments.
+Even improvement across the held-out faults would remain evidence from one synthetic domain
+and one evaluation world. Independent worlds, repeated training seeds and different task
+families would be needed to assess broader generalisation.
 
-## Cost
+## Runtime environment and accounting
 
-One 3090 or 4090 at roughly $0.11 to $0.35/hour on a spot marketplace, plus disk. Dataset
-generation is CPU-only and free. Expect two to three hours end to end including both evaluation
-arms, so a few euros.
+The GPU scripts install dependencies with lower version bounds. They do not define a locked
+training environment. Record the resolved packages, model revision, template, GPU, driver and
+CUDA versions alongside each completed run. Check that the installed PyTorch and vLLM builds
+match the host environment before starting the experiment.
 
-Debug the whole stack on the cheapest card available before touching anything expensive.
+`bootstrap.sh` installs C build tools when absent, fetches model weights before serving,
+retries downloads, disables Hugging Face Xet transfers and provides a ModelScope fallback.
+These are setup provisions, not evidence that the full pipeline has completed successfully.
 
-## Environment, the parts that actually matter
+Generated configurations use `kind: local` and `budget_usd: 0` for inference token accounting.
+GPU rental, storage and electricity are separate expenses. No measured end-to-end runtime or
+cost is reported for this experiment.
 
-Written down because each of these cost a rental attempt, and none of them is discoverable from
-the error message alone.
-
-**Match vLLM to the image's CUDA, or use the official vLLM image.** On a
-`pytorch/pytorch:2.7.1-cuda12.8-cudnn9-runtime` base, an unpinned `pip install vllm` replaces the
-image's `torch 2.7.1+cu128` with `torch 2.11.0+cu130`. vLLM then wants a CUDA 13 toolkit that the
-image does not have, and the failure arrives from deep inside its memory-profiling pass as
-`Failed to find C compiler`, then `libnvrtc.so.13: cannot open shared object file`, then
-`Could not find nvcc`. None of those name the real problem. Use `vllm/vllm-openai` as the base, or
-pin vLLM to a release whose torch matches the image.
-
-**`-runtime` images have no C compiler.** Triton JIT-compiles attention kernels at first use and
-needs `gcc`. `-devel` has it but is roughly twice the pull, and on a rented box the pull is the
-slow part, so `bootstrap.sh` installs `build-essential` onto the smaller image. Note that
-`--enforce-eager` does *not* remove this requirement.
-
-**Fetch the model separately, with retries, and disable xet.** A rented box shares its address
-with every other tenant, so unauthenticated Hugging Face requests are often already rate limited
-(`0/500 requests remaining`). Separately, the xet storage backend fails on some hosts with a
-transport error rather than a retryable HTTP status, so `HF_HUB_DISABLE_XET=1` is set and
-ModelScope is the fallback. Pulling the snapshot before serving keeps this out of the serving path
-entirely.
-
-**Self-hosted inference is not metered, and the harness has to know that.** A generated local
-config sets `budget_usd: 0`, and a spend ceiling of zero used to mean the very first call aborted
-because spent already equalled the limit. A ceiling at or below zero now means unmetered, and
-`price_for` returns zero for the `local` provider rather than falling through to the unknown-price
-upper bound, which would have reported a free run as costing tens of dollars.
-
-**Marketplace hosts fail.** Of four instances rented, one stalled indefinitely on a single Docker
-layer and one went offline mid-run. Neither is a code problem. Budget an attempt or two, keep the
-total spend small per attempt, and destroy instances explicitly rather than trusting an in-container
-watchdog: nothing running inside the container can stop the billing.
+The instance-destruction watchdog is opt-in with `ENABLE_WATCHDOG=1`, a configured `vastai`
+CLI and an explicit `VAST_INSTANCE_ID`. It is cancelled when the script exits. Verify instance
+termination through the provider, since cleanup of local processes does not end rental billing.

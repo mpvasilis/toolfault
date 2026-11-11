@@ -21,51 +21,42 @@ from typing import Any
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from toolfault.faults import FAULTS_BY_ID  # noqa: E402
-from toolfault.report import family_of, usable  # noqa: E402
+from toolfault.report import calibration_of, family_of  # noqa: E402
+from toolfault.runner import load_rows  # noqa: E402
 from toolfault.stats import (  # noqa: E402
-    auroc,
     benjamini_hochberg,
-    ece,
     paired_permutation,
     rate,
-    risk_coverage,
 )
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from build_dataset import HELD_OUT_CONDITIONS, PREDICTIONS, TRAIN_CONDITIONS  # noqa: E402
 
 
-def load(path: str) -> list[dict[str, Any]]:
-    rows = []
-    with Path(path).open(encoding="utf-8") as handle:
-        for line in handle:
-            line = line.strip()
-            if line:
-                rows.append(json.loads(line))
-    return usable(rows)
+def index_arm(rows: list[dict[str, Any]]) -> dict[tuple[int, int | None, str, str, int], dict[str, Any]]:
+    if len({(r["run_id"], r["agent"]) for r in rows}) != 1:
+        raise ValueError("each arm must contain exactly one run and one agent")
+    indexed = {
+        (r["world_seed"], r.get("task_seed"), r["task_id"], r["condition"], r.get("repeat", 0)): r
+        for r in rows
+    }
+    if len(indexed) != len(rows):
+        raise ValueError("duplicate episode identities in one arm")
+    return indexed
 
 
-def by_task(rows: list[dict[str, Any]], condition: str, key: str) -> dict[str, float]:
-    buckets: dict[str, list[float]] = defaultdict(list)
+def by_task(rows: list[dict[str, Any]], condition: str, key: str) -> dict[tuple[int, int | None, str], float]:
+    buckets: dict[tuple[int, int | None, str], list[float]] = defaultdict(list)
     for row in rows:
         if row["condition"] == condition:
-            buckets[row["task_id"]].append(1.0 if row[key] else 0.0)
+            identity = (row["world_seed"], row.get("task_seed"), row["task_id"])
+            buckets[identity].append(1.0 if row[key] else 0.0)
     return {task: sum(v) / len(v) for task, v in buckets.items()}
 
 
 def arm_summary(rows: list[dict[str, Any]], conditions: tuple[str, ...]) -> dict[str, Any]:
     subset = [r for r in rows if r["condition"] in conditions]
-    confidences = [
-        float(r["confidence"])
-        for r in subset
-        if r["terminal"] == "submit" and r.get("confidence") is not None
-    ]
-    correct = [
-        r["outcome"] == "correct"
-        for r in subset
-        if r["terminal"] == "submit" and r.get("confidence") is not None
-    ]
-    curve = risk_coverage(confidences, correct)
+    calibration = calibration_of(subset)
     return {
         "n": len(subset),
         "resolved": rate([bool(r["resolved_correctly"]) for r in subset]),
@@ -75,9 +66,9 @@ def arm_summary(rows: list[dict[str, Any]], conditions: tuple[str, ...]) -> dict
         "mean_tool_calls": (
             sum(r["tool_call_count"] for r in subset) / len(subset) if subset else 0.0
         ),
-        "ece": ece(confidences, correct),
-        "auroc": auroc(confidences, correct),
-        "risk_at_80_coverage": curve.risk_at(0.8),
+        "ece": calibration["ece"],
+        "auroc": calibration["auroc"],
+        "risk_at_80_coverage": calibration["risk_at_80_coverage"],
     }
 
 
@@ -88,8 +79,27 @@ def main() -> int:
     parser.add_argument("--out", default="results/posttrain")
     args = parser.parse_args()
 
-    base = load(args.base)
-    tuned = load(args.tuned)
+    try:
+        base_index = index_arm(load_rows(args.base))
+        tuned_index = index_arm(load_rows(args.tuned))
+    except (OSError, ValueError) as exc:
+        print(f"[compare] {exc}", file=sys.stderr)
+        return 2
+    if base_index.keys() != tuned_index.keys() or any(
+        (row["ground_truth"], row["task_type"]) != (tuned_index[key]["ground_truth"], tuned_index[key]["task_type"])
+        for key, row in base_index.items()
+    ):
+        print("[compare] arms must have identical tasks, conditions and repeat IDs", file=sys.stderr)
+        return 2
+
+    paired = [
+        (base_index[key], tuned_index[key])
+        for key in sorted(base_index, key=repr)
+        if "error" not in (base_index[key]["outcome"], tuned_index[key]["outcome"])
+    ]
+    base = [left for left, _ in paired]
+    tuned = [right for _, right in paired]
+    excluded = len(base_index) - len(paired)
     if not base or not tuned:
         print("one of the arms produced no scorable episodes", file=sys.stderr)
         return 1
@@ -102,7 +112,7 @@ def main() -> int:
     for condition in conditions:
         base_by_task = by_task(base, condition, "resolved_correctly")
         tuned_by_task = by_task(tuned, condition, "resolved_correctly")
-        shared = sorted(set(base_by_task) & set(tuned_by_task))
+        shared = sorted(set(base_by_task) & set(tuned_by_task), key=repr)
         cell: dict[str, Any] = {
             "family": family_of(condition),
             "split": "trained" if condition in TRAIN_CONDITIONS else "held_out",
@@ -137,6 +147,7 @@ def main() -> int:
     held_out_present = tuple(c for c in conditions if c in HELD_OUT_CONDITIONS)
 
     summary = {
+        "pairs_excluded_on_error": excluded,
         "arms": {
             "base": {
                 "trained_conditions": arm_summary(base, trained_present),
@@ -172,6 +183,8 @@ def main() -> int:
 
     lines = [
         "# Post-training: base against tuned",
+        "",
+        f"Matched episode pairs scored: {len(paired)}. Pairs excluded for an endpoint error: {excluded}.",
         "",
         "## Split summary",
         "",

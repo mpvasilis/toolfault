@@ -19,12 +19,15 @@ import os
 import sys
 from pathlib import Path
 
+from validate_template import training_template
+
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--model", default="Qwen/Qwen3-4B-Instruct-2507")
     parser.add_argument("--data-dir", default="posttrain/data")
     parser.add_argument("--output-dir", default="posttrain/out/adapter")
+    parser.add_argument("--template", type=Path, help="explicit training template used in preflight")
     parser.add_argument("--epochs", type=float, default=2.0)
     parser.add_argument("--lr", type=float, default=1e-4)
     # Measured on the real dataset with posttrain/validate_template.py: median 1,988 tokens,
@@ -79,10 +82,8 @@ def main() -> int:
     tokenizer = AutoTokenizer.from_pretrained(args.model)
     assistant_only = True
     try:
-        from trl import get_training_chat_template
-
-        tokenizer.chat_template = get_training_chat_template(tokenizer)
-        print("[train] using the TRL training chat template, assistant-only loss")
+        tokenizer.chat_template = training_template(tokenizer, args.template)
+        print("[train] using assistant-only loss")
     except Exception as exc:  # noqa: BLE001 - the reason varies by TRL version and model
         if not args.allow_full_loss:
             print(
