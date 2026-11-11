@@ -1,8 +1,9 @@
 # Can this benchmark be scored without doing the work?
 
-A benchmark that reports a number without publishing what a lazy policy scores has not shown you
-anything. This page answers "could an agent get a respectable score by cheating", and
-`tests/test_not_gameable.py` fails the build if the answer changes.
+Simple policies help identify shortcuts in a benchmark's scoring rules and data. This page
+measures guessing, unconditional escalation and reliance on a single source.
+`tests/test_not_gameable.py` checks bounds on these baselines. The checks cover the specified
+policies and do not establish that every possible shortcut has been excluded.
 
 Measured over the full grid, 624 episodes per policy, world seed 7, task seed 11, 16 tasks per
 type. Zero cost, no API key.
@@ -49,8 +50,9 @@ the reference policy while doing no cross-checking at all: single-source creduli
 swapped. Silent faults now land on either side, chosen per episode from a digest of the task id, and
 the result is the table above. `secondary-only` at 52.9% sits within four points of `naive` at 49.4%,
 and both are more than forty points below the oracle. Whichever single source an agent decides to
-trust, it loses about half of the silent-fault episodes. Only reconciliation recovers all of them,
-which is the property the benchmark is meant to measure.
+trust, these two policies lose about half of the silent-fault episodes. The reference policy
+reconciles the evidence and recovers all evaluated episodes. This is the behaviour the
+benchmark is designed to reward.
 
 `test_reading_only_the_corroborating_sources_no_longer_wins` is the regression test, and it fails if
 this row climbs back toward the oracle.
@@ -63,10 +65,9 @@ They can: ECE moves from 0.390 to **0.480** while resolution does not move at al
 
 ## Two limits of the confidence column
 
-Every policy here reports confidence from a fixed rule, so every AUROC in the table is exactly 0.500.
-That is the correct output for a constant signal, and it is not a finding about anything. It does
-confirm the metric is not inventing structure that is absent, which is worth establishing before
-reading a model's AUROC.
+The five submitting shortcut policies report constant confidence, so their AUROC is 0.500.
+This confirms that the metric assigns chance ranking to a constant signal when both correct
+and incorrect submissions occur. It is a control for the metric, rather than a model finding.
 
 The oracle's AUROC is `n/a` rather than a number because it makes no errors, and AUROC is undefined
 with one class absent. Its ECE of 0.104 reflects under-confidence rather than error: it states 0.92
@@ -79,7 +80,7 @@ its own confidence when it raises a data-quality flag.
   percentages and compare `snapshot_as_of` would score well without generalising to a fault type
   outside the set. Measuring that is what the held-out fault split in
   [the post-training experiment](../posttrain/README.md) is for.
-- **Memorisation of this world.** Every number here comes from world seed 7. Results should be
-  reported on a second seed too; `--world-seed` takes one, and ground truth is derived rather than
-  stored, so any seed works.
+- **Memorisation of this world.** The table above uses world seed 7. The
+  [six-world audit](../results/audit-2026-11-11/AUDIT.md) extends the oracle and single-source
+  checks to additional generated worlds. Model generalisation still requires model reruns.
 - **Overfitting to one domain.** It is a corporate registry. A policy tuned for it may not transfer.

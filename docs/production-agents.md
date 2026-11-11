@@ -30,16 +30,18 @@ it is a design conclusion rather than a model observation:
 > condition, because it is code. It never reads the injected text, so there is nothing in it to
 > obey. It then loses about half of the silent-fault episodes, because it trusts one source.
 
-Both halves of that are architectural. Deterministic code cannot be prompt-injected and cannot
-cross-check. The design job is to put each responsibility where it belongs.
+This scripted baseline ignores instruction text and has no cross-checking procedure. The
+scripted oracle demonstrates that deterministic code can also reconcile structured sources.
+The relevant distinction is which inputs a component interprets and which checks it performs.
 
 ## 2. The rule: the model proposes, the code decides
 
 The single highest-leverage decision is what the model is allowed to be the authority on.
 
 **Keep in code:** the decision rule, the corroboration requirement, retry and backoff policy,
-the escalation threshold, idempotency, budget limits, audit logging. All of it is deterministic,
-testable, and immune to anything a tool returns.
+the escalation threshold, idempotency, budget limits and audit logging. These controls can be
+implemented and tested explicitly. Their guarantees still depend on validating untrusted data
+and enforcing the checks at the action boundary.
 
 **Leave to the model:** reading unstructured documents, resolving names and near-duplicates,
 summarising evidence, deciding which tool to call next within an allowed set, and drafting the

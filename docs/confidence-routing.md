@@ -1,12 +1,11 @@
-# Confidence routing: what an escalation threshold actually buys
+# Confidence routing under tool failures
 
-Confidence-gated escalation is the dominant pattern for agent human-handoff: when the agent's
-confidence drops below a threshold, route the case to a person. This document is about whether
-that works, how to measure it, and what it costs.
+Confidence-gated escalation routes a case to a person when the agent's stated confidence
+drops below a threshold. This document measures its effect on accepted unsafe submissions
+and review volume in the published benchmark.
 
-The short version: a threshold policy is only worth having if the confidence signal separates
-right from wrong **on the episodes where the data was corrupted**. Aggregate calibration cannot
-tell you that, and aggregate calibration is what almost everyone reports.
+A useful threshold needs an informative confidence signal **on episodes where the data was
+corrupted**. Aggregate calibration can conceal differences between clean and faulty conditions.
 
 ## Why aggregate calibration is the wrong instrument
 
@@ -27,9 +26,9 @@ Distinguishing them takes two numbers that measure different things:
 - **AUROC of confidence against correctness** answers "does higher confidence mean more likely
   right". A ranking question, and the one a threshold policy depends on.
 
-An agent can pass one and fail the other. A miscalibrated but well-ranked signal is fixable with
-a scaling constant. A well-calibrated but unranked signal is not fixable at all, because there
-is no threshold that separates anything.
+An agent can perform well on one measure and poorly on the other. A miscalibrated but well-ranked
+signal may benefit from recalibration on held-out data. A signal that assigns the same score to
+correct and incorrect answers cannot separate them through a threshold alone.
 
 That is why this repo reports calibration **per fault family**, not once per run:
 
@@ -38,44 +37,31 @@ toolfault report --episodes results/bench-v1/episodes.jsonl
 # see the "Calibration by fault family" table in REPORT.md
 ```
 
-The table gives ECE, AUROC and risk at 80% coverage separately for clean, loud, silent and
-adversarial episodes. The silent row is the one that decides whether a gate is real.
+The table gives ECE, AUROC and risk at up to 80% coverage separately for clean, loud, silent and
+adversarial episodes. Each slice reveals how the gate behaves under that class of faults.
 
-## The risk-coverage curve, and why it is the honest picture
+## The risk-coverage curve
 
-Sweep the threshold from 0 to 1. At each point, **coverage** is the fraction of cases the agent
-answers and **risk** is the error rate among those answers. Plot risk against coverage.
-
-- A signal that carries information: risk falls as coverage falls. Answering only your most
-  confident 60% gives a much lower error rate than answering everything.
-- A signal that carries none: the curve is flat. Escalating 40% of cases buys nothing, because
-  the 40% escalated has the same error rate as the 60% kept.
-
-The area under this curve (AURC) summarises it in one number, and unlike accuracy it is
-sensitive to exactly the property a gate needs. `stats.py` computes the curve, the AURC, and
-risk at fixed coverage points.
+The curve retains submissions with valid confidence at or above each distinct score.
+Coverage is the share of those submissions retained and risk is the share with incorrect answers.
+Tied scores enter together because a confidence threshold has no way to distinguish them.
+`stats.py` reports risk at the largest attainable nonempty coverage at or below a target.
+AURC integrates risk across the resulting coverage increments.
 
 ## The table that makes it a decision
 
-Coverage curves are for reading. This is for deciding. Per threshold:
+The operational table uses every scorable episode in a slice.
 
 | column | meaning |
 |---|---|
-| coverage | share of cases answered autonomously |
-| escalation rate | share routed to a human, so, reviewer load |
-| error rate on answered | error rate among the cases you did act on |
-| wrong answers reaching production | share of **all** cases that became a wrong autonomous action |
+| accepted | share of episodes with a retained autonomous submission |
+| sent to review | original escalations plus submissions diverted by the gate |
+| unfinished | share without a terminal tool call |
+| unsafe accepted / all | accepted unsafe submissions as a share of all scorable episodes |
+| unsafe / accepted | share of retained submissions that were unsafe |
 
-The last column is the one to optimise, and it is not the same as the third. A policy can have a
-low error rate on the cases it answers and still push plenty of wrong actions through, if
-coverage is high. Conversely a very low threshold looks safe on that column while escalating so
-much that the agent is not doing anything.
-
-Pick the threshold from three numbers: the measured curve, the cost of a reviewer minute, and
-the cost of a wrong action. In a regulated context the third number is not linear, and that
-asymmetry is the whole reason a gate exists.
-
-`toolfault report` emits this table per agent under "Escalation thresholds".
+`toolfault report` emits this table for all scorable episodes and for the silent-fault slice.
+The review rate estimates review volume. The experiment records no human review times or outcomes.
 
 ## What five models actually do
 
@@ -91,46 +77,37 @@ where the agent submitted an answer.
 | `qwen3-235b-a22b` | 0.414 | 0.339 | **0.365** | 0.157 | +0.147 | 0.167 |
 | `gpt-oss-120b` | 0.117 | 0.164 | **0.234** | 0.391 | +0.184 | 0.257 |
 
-Read the silent column, because that is the one a review gate has to catch.
+The silent column isolates episodes in which a tool can return plausible but unreliable data.
 
-**Three of five models sit at or below 0.5.** `gpt-oss-120b` at 0.234 and `qwen3-235b-a22b` at 0.365
-are not merely uninformative, they are inverted: on silent-fault episodes, the answers they were
-*more* confident about were *more* likely to be wrong. A threshold policy built on those numbers
-does not fail gracefully. It preferentially forwards the wrong answers to production and escalates
-the right ones. `kimi-k2` at 0.448 is indistinguishable from a coin toss.
-
-Only `gpt-oss-20b` (0.636) carries usable signal, and it is the smallest model in the grid, which is
-not the direction anyone would predict.
+The task-cluster bootstrap gives a 95% interval of 0.101–0.363 for GPT-OSS-120B, consistent
+with higher confidence on incorrect submissions in this world. The intervals for Qwen3-235B
+(0.144–0.601) and Kimi K2 (0.262–0.578) include 0.5. GPT-OSS-20B has an interval of
+0.500–0.758. The estimates use a single synthetic world and cover submissions with valid confidence.
 
 **`deepseek-v3.1` shows n/a for a reason worth stating.** Of 112 silent-fault episodes it submitted
 an answer on only 32, and every one of those 32 was correct. AUROC is undefined with one class
-absent. It escalated 71.4% of silent-fault episodes and raised a data-quality flag on 99.1% of them.
-That is a coherent and defensible policy: notice almost everything, hand almost everything to a
-human, and be right when you do answer. Its unsafe rate on silent faults is 5.4%, the lowest of any
-model. Its resolution is also the lowest, 46.4%, because escalation is not a resolution.
+absent. Six correct answers were still unsafe because the episode required escalation. It
+escalated 71.4% of silent-fault episodes and raised a data-quality flag on 99.1% of them. Its
+silent-fault unsafe rate was 5.4% and its resolution rate was 46.4%. Required escalations
+count as resolutions.
 
-The comparison that makes the point: the `secondary-only` baseline also resolves 46.4% of
-silent-fault episodes. Its unsafe rate is 53.6%. Identical accuracy, tenfold difference in what
-reaches production. Any evaluation reporting one number would rank these two agents the same.
+The `secondary-only` baseline also resolves 46.4% of silent-fault episodes, with an unsafe rate
+of 53.6%. The same resolution rate therefore accompanies substantially different safety and
+review outcomes in this benchmark.
 
-**The overconfidence gap widens on exactly the wrong slice.** Every model's mean-confidence-minus-
-accuracy gap is larger on silent faults than on clean data: `gpt-oss-20b` goes from +0.051 to
-+0.275, `gpt-oss-120b` from +0.112 to +0.184, `qwen3-235b` from +0.030 to +0.147. Aggregate
-calibration would average that away against the clean and loud slices, which are the bulk of any
-run.
+**Four of five models have a larger positive overconfidence gap under silent faults.** The
+mean-confidence-minus-accuracy gap for `gpt-oss-20b` rises from +0.051 on clean episodes to
++0.275 on silent faults, `gpt-oss-120b` from +0.112 to +0.184, and `qwen3-235b` from +0.030
+to +0.147. DeepSeek remains underconfident among its submissions, with a signed gap changing
+from −0.023 to −0.093. Aggregate calibration can conceal these condition-specific differences.
 
 ### What this means for a gate
 
-A confidence threshold is only a control if AUROC on the degraded slice is meaningfully above 0.5,
-and on this benchmark it usually is not. The practical consequences:
-
-1. **Measure AUROC per fault condition before shipping a threshold**, not overall. The aggregate
-   numbers in the leaderboard column (0.412 for `kimi-k2`, 0.620 for `deepseek`) are dominated by
-   clean and loud episodes and would have hidden all of the above.
-2. **Prefer the deterministic signals.** `deepseek` reaches a 5.4% unsafe rate through flagging and
-   escalation, not through calibration. Structural checks and source disagreement did that work.
-3. **Do not port a threshold across models.** The five models here disagree about the sign of the
-   relationship, not just its magnitude.
+The same threshold has different review and safety effects across models. For GPT-OSS-20B,
+a retrospective gate at 0.95 would divert 9.8 percentage points more episodes to review and
+reduce accepted unsafe submissions by 4.5 points. For Qwen3-235B it would divert 4.5 points
+more episodes with the observed unsafe rate still at 8.0%. Reproduce these calculations
+with `uv run python experiments/audit.py --out runs/audit`.
 
 ## What the reference policies show, and what they cannot
 
@@ -160,9 +137,8 @@ still declines with the severity of what it found: 0.921 clean, 0.910 loud, 0.86
 adversarial. It lowers its own confidence when it raises a data-quality flag. AUROC is undefined
 because there are no errors to rank, which is the correct output and not a gap in the table.
 
-**What this cannot show:** whether real models rank their errors. Both reference policies report
-confidence from a fixed rule, so neither can produce an informative AUROC. That row needs the
-model grid, and it is the number this document exists to report. It lands with `bench-v1`.
+**What this cannot show:** whether model confidence ranks model errors. These reference policies
+provide controls for the metrics. The model observations are reported separately in `bench-v1`.
 
 ## Cheaper signals that should gate first
 
@@ -178,11 +154,11 @@ deterministic and free:
 3. **Provenance gaps.** A decisive field with a single source, or with a stale one, escalates on
    the strength of its metadata.
 
-The benchmark exposes this directly through `data_quality_flags`, which is machine-checkable, has
-a measured false-positive rate on the clean condition, and does not require trusting a number the
-model made up. In the reference run the `oracle` flags on 0% of clean episodes and on the large
-majority of episodes where a fault corrupted the data; `naive` flags on nothing, ever, which is
-what a policy with no structural checks looks like.
+The benchmark records `data_quality_flags` and measures how often at least one flag appears,
+including a false-positive rate on clean episodes. These are agent declarations. The scorer
+does not verify that a flag identifies the actual fault. In the reference run, the `oracle`
+flags on 0% of clean episodes and on most episodes where a fault corrupted the data. The
+`naive` policy raises no flags.
 
 ## Practical notes
 
@@ -204,8 +180,9 @@ what a policy with no structural checks looks like.
 ## Reproducing
 
 ```bash
-toolfault selftest --tasks-per-type 16 --run-id reference --out-dir results
-toolfault report --episodes results/reference/episodes.jsonl
+toolfault selftest --tasks-per-type 16 --run-id reference-new --out-dir runs
+toolfault report --episodes runs/reference-new/episodes.jsonl
 ```
 
-Free, no API key. The tables above come from that run.
+The reference-policy check needs no API key. Use an unused run ID for each execution.
+The model tables use the committed `results/bench-v1/episodes.jsonl`.
