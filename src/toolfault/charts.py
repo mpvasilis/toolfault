@@ -134,8 +134,7 @@ def risk_coverage_svg(
 ) -> Path:
     """Risk against coverage, one line per agent, over one fault family.
 
-    A line that slopes down means confidence carries information and an escalation threshold
-    buys something. A flat line means it does not, which is the result worth publishing.
+    Dots are achievable thresholds among submissions with valid confidence.
     """
     left, top, plot_w, plot_h = 54, 46 if title else 24, 380, 260
     width, height = left + plot_w + 168, top + plot_h + 52
@@ -171,7 +170,7 @@ def risk_coverage_svg(
     parts.append(f'<line class="axis" x1="{left}" y1="{top}" x2="{left}" y2="{top + plot_h}"/>')
     parts.append(
         f'<text class="muted" x="{left + plot_w / 2:.0f}" y="{height - 8}" font-size="10" '
-        f'text-anchor="middle">coverage: share of cases answered rather than escalated</text>'
+        f'text-anchor="middle">coverage: share of confidence-bearing submissions retained</text>'
     )
     parts.append(
         f'<text class="muted" x="14" y="{top + plot_h / 2:.0f}" font-size="10" '
@@ -182,15 +181,9 @@ def risk_coverage_svg(
     legend_y = top + 6
     for index, (agent, data) in enumerate(summary["agents"].items()):
         cal = (data.get("calibration_by_family") or {}).get(family) or {}
-        thresholds = cal.get("thresholds") or []
-        points = [
-            (row["coverage"], row["error_rate_on_answered"])
-            for row in thresholds
-            if row.get("coverage")
-        ]
+        points = cal.get("risk_coverage_points") or ()
         colour = SERIES_COLOURS[index % len(SERIES_COLOURS)]
         if points:
-            points.sort()
             path_d = " ".join(
                 f"{'M' if i == 0 else 'L'} {left + plot_w * c:.1f} "
                 f"{top + plot_h - plot_h * r:.1f}"

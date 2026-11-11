@@ -4,15 +4,12 @@
 # reference and degenerate baselines in the same run so the leaderboard is one table with the
 # ceiling and the floor on it.
 #
-# Every model here is open weight and reachable through a public API, so the whole leaderboard
-# is reproducible by a stranger with a key and about thirteen dollars. That is not a small
-# property for a benchmark, and it is the reason no closed model is in the published grid.
+# The archived run used five open-weight models served by OpenRouter. Current
+# availability, provider revisions and billing can differ from that run.
 #
 # Sizing: 16 tasks per type gives 64 tasks and about 624 episodes per agent once per-task
-# condition support is applied. Per-episode cost was measured per model in a probe run rather
-# than estimated, and the ceiling below carries roughly a dollar of headroom over the estimate.
-# The budget is checked before every model call, so an overrun stops the run rather than the
-# card.
+# condition support is applied. The budget is an estimated stop threshold based on usage
+# reported so far. In-flight requests may complete after the threshold is reached.
 #
 # max_output_tokens is set high on purpose. At 1200 the reasoning models were truncated before
 # they could emit a tool call, the harness saw an empty reply, and episodes ended as no_terminal.

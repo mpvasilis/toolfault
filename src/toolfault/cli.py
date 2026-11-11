@@ -12,7 +12,7 @@ from typing import Any
 
 from .faults import FAULTS, applicable_conditions
 from .report import summarize, write_report
-from .runner import RunConfig, load_rows, run_grid
+from .runner import RunConfig, estimate_grid_cost, load_rows, plan, run_grid
 from .tasks import generate_tasks
 from .world import build_world
 
@@ -39,7 +39,12 @@ def _load_env_file(path: str) -> int:
 def _load_config(path: str) -> RunConfig:
     import yaml
 
-    data = yaml.safe_load(Path(path).read_text(encoding="utf-8")) or {}
+    try:
+        data = yaml.safe_load(Path(path).read_text(encoding="utf-8"))
+    except yaml.YAMLError as exc:
+        raise ValueError(f"invalid YAML in {path}: {exc}") from None
+    if not isinstance(data, dict):
+        raise ValueError(f"{path} must contain a mapping")
     return RunConfig.from_dict(data)
 
 
@@ -50,6 +55,8 @@ def cmd_run(args: argparse.Namespace) -> int:
     config = _load_config(args.config)
     if args.run_id:
         config.run_id = args.run_id
+    if args.out_dir:
+        config.out_dir = args.out_dir
     if args.budget is not None:
         config.budget_usd = args.budget
     if args.workers is not None:
@@ -66,25 +73,33 @@ def cmd_run(args: argparse.Namespace) -> int:
     if args.dry_run:
         world = build_world(seed=config.world_seed)
         tasks = generate_tasks(world, n_per_type=config.tasks_per_type, seed=config.task_seed)
-        from .runner import plan
-
         cells = plan(config, tasks)
-        paid = sum(1 for spec, *_ in cells if spec.is_paid())
+        paid, estimate = estimate_grid_cost(cells)
         print(json.dumps({
             "run_id": config.run_id,
             "tasks": len(tasks),
             "episodes": len(cells),
             "paid_episodes": paid,
+            "estimated_cost_usd": round(estimate, 4),
             "agents": [s.resolved_label() for s in config.agents],
             "budget_usd": config.budget_usd,
         }, indent=2))
         return 0
 
     manifest = run_grid(config)
-    rows = load_rows(Path(config.out_dir) / config.run_id / "episodes.jsonl")
+    output = Path(config.out_dir) / config.run_id
+    rows = load_rows(output / "episodes.jsonl")
     summary = summarize(rows)
-    paths = write_report(summary, Path(config.out_dir) / config.run_id)
+    paths = write_report(summary, output)
+    from .charts import write_charts
+
+    write_charts(summary, output)
     print(json.dumps({"manifest": manifest, "report": str(paths["report"])}, indent=2))
+    missing = {spec.resolved_label() for spec in config.agents} - summary["agents"].keys()
+    if missing:
+        print(f"[toolfault] no scorable episodes for: {', '.join(sorted(missing))}", file=sys.stderr)
+    if missing or manifest["stopped_on_budget"] or manifest["harness_exceptions"]:
+        return 1
     return 0
 
 
@@ -93,6 +108,7 @@ def cmd_selftest(args: argparse.Namespace) -> int:
     config = RunConfig(
         run_id=args.run_id,
         world_seed=args.world_seed,
+        task_seed=args.task_seed,
         tasks_per_type=args.tasks_per_type,
         budget_usd=0.0,
         workers=args.workers,
@@ -102,10 +118,13 @@ def cmd_selftest(args: argparse.Namespace) -> int:
     from .runner import AgentSpec
 
     config.agents = [AgentSpec(kind="oracle"), AgentSpec(kind="naive")]
-    run_grid(config, verbose=not args.quiet)
+    manifest = run_grid(config, verbose=not args.quiet)
     rows = load_rows(Path(config.out_dir) / config.run_id / "episodes.jsonl")
     summary = summarize(rows)
     write_report(summary, Path(config.out_dir) / config.run_id)
+    if manifest["episodes_completed"] != manifest["episodes_planned"] or manifest["episodes_with_errors"]:
+        print("[toolfault] selftest grid incomplete or contains errors", file=sys.stderr)
+        return 1
 
     oracle = summary["agents"].get("oracle")
     if oracle is None:
@@ -143,7 +162,7 @@ def cmd_selftest(args: argparse.Namespace) -> int:
             )
         return 1
 
-    print("\nOK: the reference policy resolves every condition. The benchmark is solvable.")
+    print(f"\nOK: the reference policy resolves all {len(oracle['conditions'])} scheduled conditions.")
     return 0
 
 
@@ -167,6 +186,7 @@ def cmd_replay(args: argparse.Namespace) -> int:
     print(f"agent      : {row.get('agent')}")
     print(f"task       : {row.get('task_id')} ({row.get('task_type')})")
     print(f"condition  : {row.get('condition')}")
+    print(f"repeat     : {row.get('repeat', 0)}")
     print(f"truth      : {row.get('ground_truth')}")
     print(f"answer     : {row.get('answer')}  confidence={row.get('confidence')}")
     print(f"outcome    : {row.get('outcome')}  unsafe={row.get('unsafe')}")
@@ -235,7 +255,8 @@ def main(argv: list[str] | None = None) -> int:
     run = sub.add_parser("run", help="run a benchmark grid from a config file")
     run.add_argument("--config", required=True)
     run.add_argument("--run-id")
-    run.add_argument("--budget", type=float, help="hard USD ceiling, overrides the config")
+    run.add_argument("--out-dir", help="root for run outputs, overrides the config")
+    run.add_argument("--budget", type=float, help="stop starting paid calls at this estimated USD spend")
     run.add_argument("--workers", type=int)
     run.add_argument("--save-traces", choices=["all", "failures", "none"])
     run.add_argument("--only", nargs="*", help="restrict to these agent labels or kinds")
@@ -248,6 +269,7 @@ def main(argv: list[str] | None = None) -> int:
     )
     selftest.add_argument("--run-id", default="selftest")
     selftest.add_argument("--world-seed", type=int, default=7)
+    selftest.add_argument("--task-seed", type=int, default=11)
     selftest.add_argument("--tasks-per-type", type=int, default=12)
     selftest.add_argument("--workers", type=int, default=8)
     selftest.add_argument("--out-dir", default="runs")
@@ -279,7 +301,11 @@ def main(argv: list[str] | None = None) -> int:
     tasks.set_defaults(func=cmd_tasks)
 
     args = parser.parse_args(argv)
-    return int(args.func(args))
+    try:
+        return int(args.func(args))
+    except (ValueError, TypeError, OSError, RuntimeError) as exc:
+        print(f"[toolfault] {exc}", file=sys.stderr)
+        return 2
 
 
 if __name__ == "__main__":  # pragma: no cover

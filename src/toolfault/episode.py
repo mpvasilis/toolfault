@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import math
 import time
 from dataclasses import asdict, dataclass, field
 from typing import Any
@@ -52,6 +53,8 @@ class Episode:
     error: str | None = None
     messages: list[dict[str, Any]] = field(default_factory=list)
     tool_log: list[dict[str, Any]] = field(default_factory=list)
+    repeat: int = 0
+    task_seed: int | None = None
 
     def to_row(self) -> dict[str, Any]:
         """Everything except the transcript, for tabular analysis."""
@@ -80,11 +83,13 @@ def _assistant_message(reply: ModelReply) -> dict[str, Any]:
 
 
 def _as_float(value: Any) -> float | None:
+    if isinstance(value, bool):
+        return None
     try:
         out = float(value)
-    except (TypeError, ValueError):
+    except (TypeError, ValueError, OverflowError):
         return None
-    return max(0.0, min(1.0, out))
+    return out if math.isfinite(out) and 0.0 <= out <= 1.0 else None
 
 
 def _as_list(value: Any) -> list[str]:
@@ -123,8 +128,11 @@ def run_episode(
         ground_truth=task.answer,
     )
 
+    system_prompt = SYSTEM_PROMPT.replace(
+        f"most {MAX_TOOL_CALLS} tool calls", f"most {max_tool_calls} tool calls"
+    )
     messages: list[dict[str, Any]] = [
-        {"role": "system", "content": SYSTEM_PROMPT},
+        {"role": "system", "content": system_prompt},
         {"role": "user", "content": task.question},
     ]
     tools = _openai_tools()

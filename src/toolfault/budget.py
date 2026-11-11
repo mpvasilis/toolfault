@@ -1,13 +1,14 @@
-﻿"""Token pricing and a hard spend ceiling.
+﻿"""Token pricing and an estimated spend stop threshold.
 
-The ceiling is checked before every model call, not after, so an overnight run cannot
-quietly spend more than it was told to. Prices are USD per million tokens and are
-recorded in every result file alongside the numbers they produced, because they change.
+The stop threshold uses usage already reported by the provider. In-flight calls and
+pricing differences can put the invoice above this estimate. Prices are USD per million
+tokens and are recorded alongside the results.
 """
 
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from threading import Lock
 
 # USD per million tokens, (prompt, completion).
 #
@@ -15,7 +16,7 @@ from dataclasses import dataclass, field
 # 2026-08-01; the OpenAI figures come from its published price list on the same date,
 # because the OpenAI API does not expose pricing. Prices move, so the table used for a
 # run is copied into that run's manifest.json next to the costs it produced. Anything not
-# listed is priced at UNKNOWN_PRICE and the cost is an upper-bound estimate.
+# listed is priced at UNKNOWN_PRICE for planning purposes.
 PRICES: dict[str, tuple[float, float]] = {
     # OpenAI
     "gpt-5-mini": (0.25, 2.00),
@@ -66,8 +67,7 @@ UNKNOWN_PRICE = (1.00, 3.00)
 def price_for(model: str, provider: str = "") -> tuple[float, float]:
     """Price for a model, preferring the provider-qualified entry.
 
-    Falls back to UNKNOWN_PRICE rather than guessing, so an unpriced model shows up as an
-    upper bound in the manifest instead of quietly reporting someone else's rate.
+    The fallback is a planning estimate for models without a configured price.
     """
     # Self-hosted inference has no per-token price. Reporting one would be fiction, and
     # pricing a local vLLM server at the UNKNOWN_PRICE fallback would make a free run look
@@ -76,7 +76,8 @@ def price_for(model: str, provider: str = "") -> tuple[float, float]:
         return (0.0, 0.0)
     if provider and f"{model}@{provider}" in PRICES:
         return PRICES[f"{model}@{provider}"]
-    if model in PRICES:
+    bundled_provider = "together" if "/" in model else "openai"
+    if provider in ("", bundled_provider) and model in PRICES:
         return PRICES[model]
     return UNKNOWN_PRICE
 
@@ -94,31 +95,29 @@ class BudgetExceeded(RuntimeError):
 
 @dataclass
 class Budget:
-    """Shared spend counter with a hard ceiling."""
+    """Thread-safe usage accounting shared by the grid workers."""
 
     limit_usd: float
     spent_usd: float = 0.0
     calls: int = 0
     per_model: dict[str, float] = field(default_factory=dict)
+    _lock: Lock = field(default_factory=Lock, init=False, repr=False, compare=False)
 
     def check(self) -> None:
-        # A ceiling at or below zero means there is nothing to meter, which is the case for a
-        # self-hosted server. Without this, a run against a local vLLM instance aborted on its
-        # first call because spent (0) was already equal to the limit (0).
-        if self.limit_usd <= 0:
-            return
-        if self.spent_usd >= self.limit_usd:
-            raise BudgetExceeded(
-                f"spend ceiling reached: ${self.spent_usd:.4f} of ${self.limit_usd:.2f}"
-            )
+        with self._lock:
+            if self.spent_usd >= self.limit_usd:
+                raise BudgetExceeded(
+                    f"estimated spend threshold reached: ${self.spent_usd:.4f} of ${self.limit_usd:.2f}"
+                )
 
     def add(
         self, model: str, prompt_tokens: int, completion_tokens: int, provider: str = ""
     ) -> float:
         delta = cost_usd(model, prompt_tokens, completion_tokens, provider)
-        self.spent_usd += delta
-        self.calls += 1
-        self.per_model[model] = self.per_model.get(model, 0.0) + delta
+        with self._lock:
+            self.spent_usd += delta
+            self.calls += 1
+            self.per_model[model] = self.per_model.get(model, 0.0) + delta
         return delta
 
     def remaining(self) -> float:
@@ -128,22 +127,20 @@ class Budget:
 def estimate_run_cost(
     models: list[tuple[str, str]],
     episodes_per_model: int,
-    avg_prompt_tokens: int = 5200,
-    avg_completion_tokens: int = 420,
-    avg_model_calls_per_episode: int = 7,
+    avg_prompt_tokens: int = 14266,
+    avg_completion_tokens: int = 1089,
 ) -> dict[str, float]:
     """Rough pre-run estimate, printed before anything is spent.
 
-    The prompt-token figure assumes the conversation grows as tool results accumulate,
-    so it is the average over the calls in an episode rather than the system prompt size.
+    Token counts are per episode and default to the observed means in the published grid.
     """
     out: dict[str, float] = {}
     total = 0.0
     for model, provider in models:
         per_episode = cost_usd(
             model,
-            avg_prompt_tokens * avg_model_calls_per_episode,
-            avg_completion_tokens * avg_model_calls_per_episode,
+            avg_prompt_tokens,
+            avg_completion_tokens,
             provider,
         )
         model_total = per_episode * episodes_per_model
