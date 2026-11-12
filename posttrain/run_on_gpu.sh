@@ -22,14 +22,47 @@ RESULTS_DIR="${RESULTS_DIR:-results}"
 TASKS_PER_TYPE="${TASKS_PER_TYPE:-16}"
 PORT="${PORT:-8000}"
 MAX_LEN="${MAX_LEN:-16384}"
+RUN_PREFIX="${RUN_PREFIX:-posttrain-$(date -u +%Y%m%dT%H%M%SZ)}"
+TEMPLATE_ARGS=()
+if [[ -n "${TRAINING_TEMPLATE:-}" ]]; then
+  TEMPLATE_ARGS=(--template "$TRAINING_TEMPLATE")
+fi
+
+stop_serving() {
+  if [[ -n "${VLLM_PID:-}" ]]; then
+    kill "$VLLM_PID" 2>/dev/null || true
+    wait "$VLLM_PID" 2>/dev/null || true
+    unset VLLM_PID
+  fi
+}
+cleanup() {
+  stop_serving
+  if [[ -n "${WATCHDOG_PID:-}" ]]; then
+    kill "$WATCHDOG_PID" 2>/dev/null || true
+    wait "$WATCHDOG_PID" 2>/dev/null || true
+  fi
+}
+trap cleanup EXIT
 
 # An idle GPU still bills. This kills the box after HARD_STOP_MINUTES no matter what state
 # the run is in, which is the difference between a forgotten instance costing two euros and
 # costing a hundred.
 HARD_STOP_MINUTES="${HARD_STOP_MINUTES:-240}"
-if [[ "${ENABLE_WATCHDOG:-1}" == "1" ]]; then
-  ( sleep $(( HARD_STOP_MINUTES * 60 )); echo "[watchdog] hard stop after ${HARD_STOP_MINUTES}m"; \
-    command -v vastai >/dev/null && vastai destroy instance "${VAST_INSTANCE_ID:-0}" || shutdown -h now ) &
+if [[ "${ENABLE_WATCHDOG:-0}" == "1" ]]; then
+  if ! command -v vastai >/dev/null || [[ ! "${VAST_INSTANCE_ID:-}" =~ ^[1-9][0-9]*$ ]] ||
+      [[ ! "$HARD_STOP_MINUTES" =~ ^[1-9][0-9]*$ ]]; then
+    echo "[watchdog] requires vastai, a positive VAST_INSTANCE_ID and a positive HARD_STOP_MINUTES" >&2
+    exit 2
+  fi
+  (
+    sleep $(( HARD_STOP_MINUTES * 60 )) &
+    timer=$!
+    trap 'kill "$timer" 2>/dev/null || true; exit 0' TERM
+    wait "$timer"
+    echo "[watchdog] hard stop after ${HARD_STOP_MINUTES}m"
+    vastai destroy instance "$VAST_INSTANCE_ID"
+  ) &
+  WATCHDOG_PID=$!
   echo "[watchdog] armed for ${HARD_STOP_MINUTES} minutes"
 fi
 
@@ -74,15 +107,6 @@ serve() {
   return 1
 }
 
-stop_serving() {
-  if [[ -n "${VLLM_PID:-}" ]]; then
-    kill "$VLLM_PID" 2>/dev/null || true
-    wait "$VLLM_PID" 2>/dev/null || true
-    sleep 5
-  fi
-}
-trap stop_serving EXIT
-
 write_config() {
   local run_id="$1" model_arg="$2"
   cat > "configs/generated-${run_id}.yaml" <<YAML
@@ -110,8 +134,8 @@ export LOCAL_API_KEY="${LOCAL_API_KEY:-not-used-by-vllm}"
 
 # ---------------------------------------------------------------- base arm
 serve base
-write_config "posttrain-base" "$MODEL"
-toolfault run --config "configs/generated-posttrain-base.yaml"
+write_config "${RUN_PREFIX}-base" "$MODEL"
+toolfault run --config "configs/generated-${RUN_PREFIX}-base.yaml"
 stop_serving
 
 # ---------------------------------------------------------------- training
@@ -122,20 +146,21 @@ if [[ "${SKIP_TRAIN:-0}" != "1" ]]; then
   # turns, training would quietly put tool-result tokens under loss and the run would be worth
   # nothing while still costing a full rental.
   echo "=== validating the chat template ==="
-  python posttrain/validate_template.py --model "$MODEL"
+  python posttrain/validate_template.py --model "$MODEL" "${TEMPLATE_ARGS[@]}"
+  python posttrain/validate_template.py --model "$MODEL" --data posttrain/data/val.jsonl "${TEMPLATE_ARGS[@]}"
   echo "=== training ==="
-  python posttrain/train_qlora.py --model "$MODEL" --output-dir "$ADAPTER_DIR"
+  python posttrain/train_qlora.py --model "$MODEL" --output-dir "$ADAPTER_DIR" "${TEMPLATE_ARGS[@]}"
 fi
 
 # ---------------------------------------------------------------- tuned arm
 serve tuned --enable-lora --lora-modules "tuned=${ADAPTER_DIR}" --max-lora-rank 32
-write_config "posttrain-tuned" "tuned"
-toolfault run --config "configs/generated-posttrain-tuned.yaml"
+write_config "${RUN_PREFIX}-tuned" "tuned"
+toolfault run --config "configs/generated-${RUN_PREFIX}-tuned.yaml"
 stop_serving
 
 echo "=== comparison ==="
 python posttrain/compare.py \
-  --base "${RESULTS_DIR}/posttrain-base/episodes.jsonl" \
-  --tuned "${RESULTS_DIR}/posttrain-tuned/episodes.jsonl" \
-  --out "${RESULTS_DIR}/posttrain"
-echo "done. results under ${RESULTS_DIR}/posttrain"
+  --base "${RESULTS_DIR}/${RUN_PREFIX}-base/episodes.jsonl" \
+  --tuned "${RESULTS_DIR}/${RUN_PREFIX}-tuned/episodes.jsonl" \
+  --out "${RESULTS_DIR}/${RUN_PREFIX}"
+echo "done. results under ${RESULTS_DIR}/${RUN_PREFIX}"

@@ -25,6 +25,7 @@ from __future__ import annotations
 import math
 import random
 from dataclasses import dataclass
+from itertools import groupby
 
 
 @dataclass(frozen=True)
@@ -186,31 +187,34 @@ class RiskCoverage:
     full_coverage_risk: float
 
     def risk_at(self, coverage: float) -> float:
-        best = self.full_coverage_risk
-        for cov, risk in self.points:
-            if cov <= coverage + 1e-9:
-                best = risk
-        return best
+        """Risk at the greatest achievable coverage at or below the target."""
+        return next(
+            (risk for cov, risk in reversed(self.points) if cov <= coverage + 1e-9),
+            math.nan,
+        )
 
 
 def risk_coverage(confidences: list[float], correct: list[bool]) -> RiskCoverage:
     """Selective-prediction curve: answer the most confident fraction, escalate the rest.
 
-    Risk is the error rate among the answers actually given. A useful confidence signal
-    makes risk fall as coverage falls. A useless one leaves the curve flat, which is the
-    finding this benchmark keeps producing.
+    Each point is achievable with a confidence threshold. Equal scores enter together.
+    AURC uses a right-endpoint step integral over the resulting coverage increments.
     """
     n = len(confidences)
     if n == 0:
         return RiskCoverage((), float("nan"), float("nan"))
     ordered = sorted(zip(confidences, correct, strict=True), key=lambda pair: -pair[0])
     points: list[tuple[float, float]] = []
+    seen = 0
     errors = 0
-    for i, (_, ok) in enumerate(ordered, start=1):
-        if not ok:
-            errors += 1
-        points.append((i / n, errors / i))
-    aurc = sum(risk for _, risk in points) / len(points)
+    aurc = 0.0
+    for _, group in groupby(ordered, key=lambda pair: pair[0]):
+        batch = list(group)
+        seen += len(batch)
+        errors += sum(not ok for _, ok in batch)
+        risk = errors / seen
+        points.append((seen / n, risk))
+        aurc += len(batch) / n * risk
     return RiskCoverage(tuple(points), aurc, points[-1][1])
 
 

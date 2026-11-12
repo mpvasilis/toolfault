@@ -79,8 +79,8 @@ class OpenAICompatAgent:
             self._client = httpx.Client(
                 base_url=self.base_url.rstrip("/"),
                 headers={
-                    "Authorization": f"Bearer {self.api_key}",
                     "Content-Type": "application/json",
+                    **({"Authorization": f"Bearer {self.api_key}"} if self.api_key else {}),
                 },
                 timeout=self.timeout,
             )
@@ -114,13 +114,21 @@ class OpenAICompatAgent:
         delay = 2.0
         last: str | None = None
         for attempt in range(self.max_retries):
+            if self.budget is not None and self.provider != "local":
+                self.budget.check()
             try:
                 response = self._http().post("/chat/completions", json=payload)
             except httpx.HTTPError as exc:
                 last = f"transport: {exc.__class__.__name__}: {exc}"
             else:
                 if response.status_code == 200:
-                    return response.json(), None
+                    try:
+                        body = response.json()
+                    except ValueError:
+                        return None, "invalid JSON in model endpoint response"
+                    if not isinstance(body, dict):
+                        return None, "expected a JSON object from model endpoint"
+                    return body, None
                 last = f"http {response.status_code}: {response.text[:400]}"
                 if response.status_code not in RETRY_STATUS:
                     return None, last
@@ -137,9 +145,6 @@ class OpenAICompatAgent:
     def reply(
         self, messages: list[dict[str, Any]], tools: list[dict[str, Any]], ctx: Context
     ) -> ModelReply:
-        if self.budget is not None:
-            self.budget.check()
-
         body, error = self._post(self._payload(messages, tools))
         if body is None:
             self.last_error = error
@@ -178,7 +183,7 @@ class OpenAICompatAgent:
                 try:
                     parsed = json.loads(arguments or "{}")
                     args = parsed if isinstance(parsed, dict) else {"value": parsed}
-                except json.JSONDecodeError:
+                except (TypeError, ValueError):
                     # A model that emits unparseable arguments is agent behaviour, not a
                     # transport fault, so it flows through to the tool as bad arguments.
                     args = {"__unparsed__": str(arguments)[:400]}

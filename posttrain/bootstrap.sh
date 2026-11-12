@@ -11,19 +11,21 @@
 #     retryable HTTP status, so HF_HUB_DISABLE_XET is set. ModelScope is the fallback.
 #   * SSH to a busy host drops on rapid successive connections, so this runs detached under
 #     setsid and writes one log rather than being driven interactively.
-set -uo pipefail
+set -euo pipefail
 
 REPO_URL="${REPO_URL:-https://github.com/mpvasilis/toolfault}"
 WORK="${WORK:-/workspace}"
 MODEL_DIR="${MODEL_DIR:-$WORK/models/qwen3-4b}"
 MODEL_REPO="${MODEL_REPO:-Qwen/Qwen3-4B-Instruct-2507}"
 LOG="$WORK/bootstrap.log"
+CHECKOUT_DIR="${CHECKOUT_DIR:-$WORK/toolfault}"
 
 export HF_HUB_DISABLE_XET=1
 export HF_HUB_ENABLE_HF_TRANSFER=0
 export PIP_ROOT_USER_ACTION=ignore
 export TOKENIZERS_PARALLELISM=false
 
+mkdir -p "$WORK"
 exec > >(tee -a "$LOG") 2>&1
 echo "=== bootstrap starting $(date -u +%FT%TZ) ==="
 nvidia-smi --query-gpu=name,memory.total,driver_version --format=csv,noheader
@@ -42,10 +44,8 @@ export CC=cc
 cc --version | head -1
 
 echo "=== clone ==="
-cd "$WORK"
-rm -rf toolfault
-git clone --depth 1 "$REPO_URL" toolfault
-cd "$WORK/toolfault"
+git clone --depth 1 "$REPO_URL" "$CHECKOUT_DIR"
+cd "$CHECKOUT_DIR"
 
 echo "=== install ==="
 pip install -q -U "transformers>=4.57" "trl>=0.24" "peft>=0.17" "datasets>=3.0" \

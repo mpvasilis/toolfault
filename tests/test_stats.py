@@ -99,11 +99,20 @@ def test_risk_coverage_falls_when_confidence_is_informative():
     assert curve.aurc < curve.full_coverage_risk
 
 
-def test_risk_coverage_stays_flat_when_confidence_is_noise():
+def test_constant_confidence_has_only_one_nonempty_threshold():
     confidences = [0.9] * 8
     correct = [True, False] * 4
     curve = risk_coverage(confidences, correct)
-    assert abs(curve.risk_at(0.5) - 0.5) < 0.26  # ties, so it can only wobble
+    assert curve.points == ((1.0, 0.5),)
+    assert curve.aurc == 0.5
+    assert math.isnan(curve.risk_at(0.5))
+
+
+def test_risk_coverage_is_invariant_to_order_inside_a_tie():
+    confidences = [0.9, 0.9, 0.7, 0.7]
+    curve = risk_coverage(confidences, [True, False, True, False])
+    assert curve == risk_coverage(confidences, [False, True, False, True])
+    assert curve.points == ((0.5, 0.5), (1.0, 0.5))
 
 
 def test_threshold_table_accounts_for_every_episode():

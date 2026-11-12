@@ -11,3 +11,6 @@
 
 # SVG charts are diffed in pull requests, so keep them stable.
 *.svg text eol=lf
+
+# Keep generated vector paths collapsed during code review.
+docs/figures/*.svg linguist-generated=true
