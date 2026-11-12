@@ -7,24 +7,16 @@ and review volume in the published benchmark.
 A useful threshold needs an informative confidence signal **on episodes where the data was
 corrupted**. Aggregate calibration can conceal differences between clean and faulty conditions.
 
-## Why aggregate calibration is the wrong instrument
+## Calibration and confidence ranking
 
-Two agents can report the same overall ECE and be completely different products.
+Agents with similar aggregate calibration can respond differently to a confidence threshold.
+A confidence signal may rank correct answers above incorrect answers even when its numerical
+values are miscalibrated. Conversely, high confidence on both correct and incorrect submissions
+limits the errors that a threshold can divert.
 
-Agent A is a little overconfident everywhere. Its confidence still ranks correct answers above
-wrong ones, so a threshold catches most of its errors and lets most of its correct answers
-through.
-
-Agent B is well calibrated on clean data and reports 0.95 on every episode where a tool quietly
-lied to it. Its aggregate ECE looks fine, because clean episodes dominate the run. Its threshold
-policy is worthless, because the failures it needs to catch sit at the top of the confidence
-distribution alongside the successes.
-
-Distinguishing them takes two numbers that measure different things:
-
-- **ECE** answers "is 0.9 worth 0.9". A calibration question.
-- **AUROC of confidence against correctness** answers "does higher confidence mean more likely
-  right". A ranking question, and the one a threshold policy depends on.
+- **ECE** measures the difference between stated confidence and observed accuracy within bins.
+- **Confidence AUROC** measures whether correct submissions receive higher confidence than
+  incorrect submissions.
 
 An agent can perform well on one measure and poorly on the other. A miscalibrated but well-ranked
 signal may benefit from recalibration on held-out data. A signal that assigns the same score to
@@ -48,7 +40,7 @@ Tied scores enter together because a confidence threshold has no way to distingu
 `stats.py` reports risk at the largest attainable nonempty coverage at or below a target.
 AURC integrates risk across the resulting coverage increments.
 
-## The table that makes it a decision
+## Routing metrics
 
 The operational table uses every scorable episode in a slice.
 
@@ -63,7 +55,7 @@ The operational table uses every scorable episode in a slice.
 `toolfault report` emits this table for all scorable episodes and for the silent-fault slice.
 The review rate estimates review volume. The experiment records no human review times or outcomes.
 
-## What five models actually do
+## Published model results
 
 From the published grid: 4,992 episodes, 624 per agent, world seed 7, task seed 11, 16 tasks per
 type. Confidence AUROC against correctness, computed **separately per fault family** on the episodes
@@ -123,14 +115,12 @@ per type:
 | `oracle` | loud | 325 | 0.910 | 1.000 | -0.090 | 0.090 | n/a |
 | `oracle` | silent | 85 | 0.866 | 1.000 | -0.134 | 0.134 | n/a |
 
-Read this carefully, because it is a demonstration of the instrument rather than a finding about
-models.
+These policies provide controls for the calibration metrics.
 
-The `naive` policy reports a constant 0.900. Its AUROC is therefore exactly 0.5 by construction:
-constant confidence cannot rank anything. Its overconfidence gap grows from -0.100 on clean data
-to +0.551 under loud faults, which is what a fixed self-report looks like when accuracy moves and
-the number does not. It is the worst case for a threshold gate, and it is what a real agent
-approximates whenever it answers 0.95 out of habit.
+The `naive` policy reports a constant 0.900. Its AUROC is 0.5 on slices containing both correct
+and incorrect submissions, because constant confidence cannot rank them. Its overconfidence
+gap changes from -0.100 on clean episodes to +0.551 under loud faults as accuracy declines.
+A confidence threshold either retains or diverts every submission from this policy.
 
 The `oracle` is the useful comparison. Its accuracy is 1.0 everywhere, and its stated confidence
 still declines with the severity of what it found: 0.921 clean, 0.910 loud, 0.866 silent, 0.838
@@ -140,15 +130,15 @@ because there are no errors to rank, which is the correct output and not a gap i
 **What this cannot show:** whether model confidence ranks model errors. These reference policies
 provide controls for the metrics. The model observations are reported separately in `bench-v1`.
 
-## Cheaper signals that should gate first
+## Deterministic checks
 
-The model's self-report should be the last gate, not the first, because three better signals are
-deterministic and free:
+Structured outputs also permit checks that operate independently of stated confidence.
+The benchmark includes three types.
 
 1. **Structural checks.** Percentages that do not sum to 100. An amount three orders of magnitude
    from its own prior year. A returned identifier that is not the one requested. A `retrieved_at`
-   older than the as-of date asked for. Each of these is a few lines of code, each catches a
-   specific silent fault outright, and none of them can be talked out of it.
+   older than the as-of date asked for. These checks can identify specific inconsistencies
+   when the required fields and metadata are available.
 2. **Source disagreement.** Two independent sources differing on a decisive fact is a hard
    escalation trigger that needs no probability at all.
 3. **Provenance gaps.** A decisive field with a single source, or with a stale one, escalates on
@@ -165,8 +155,8 @@ flags on 0% of clean episodes and on most episodes where a fault corrupted the d
 - **Verbalised confidence has coarse resolution.** Models emit 0.9 and 0.95 far more than they
   emit 0.87. Equal-mass calibration bins have to avoid splitting those ties or ECE is inflated by
   an artefact of the binning. This repo's `ece()` extends each bin past its cut until the
-  confidence value changes, and a test pins the behaviour. It was a real bug, and it would have
-  corrupted every published ECE number.
+  confidence value changes. A regression test checks that equal confidence values remain in
+  the same bin.
 - **Recalibrate per model.** Thresholds do not transfer between models, and
   [Act or Escalate](https://arxiv.org/pdf/2604.08588) reports exactly this: implicit cost
   thresholds are a model-specific property. Treat a model swap as invalidating your gate.

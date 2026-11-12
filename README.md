@@ -1,8 +1,7 @@
 # ToolFault
 
-**A benchmark for recovery, confidence and escalation under tool failures.**
-
-ToolFault evaluates whether a tool-using agent can recover when a tool returns faulty data,
+ToolFault is a benchmark for recovery, confidence and escalation under tool failures.
+It evaluates whether a tool-using agent can recover when a tool returns faulty data,
 recognise when its answer is unreliable, and escalate when the evidence cannot support a decision.
 It measures these behaviours on the same episodes, with results broken down by fault condition.
 
