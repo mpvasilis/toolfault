@@ -1,0 +1,88 @@
+=== stage tuned start 2026-11-14T14:24:03Z ===
+=== serving tuned ===
+[serve] tuned up
+{"object":"list","data":[{"id":"/workspace/models/qwen3-4b","object":"model","created":1794666283,"owned_by":"vllm","root":"/workspace/models/qwen3-4b","parent":null,"max_model_len":16384,"permission":[{"id":"modelperm-86022cad5007a7c8","object":"model_permission","created":1794666283,"allow_create_engine":false,"allow_sampling":true,"allow_logprobs":true,"allow_search_indices":false,"allow_view":true,"allow_fine_tuning":false,"organization":"*","group":null,"is_blocking":false}]},{"id":"tuned","object":"model","created":1794666283,"owned_by":"vllm","root":"/workspace/toolfault/posttrain/out/a
+[toolfault] world seed 7, 64 tasks, 624 episodes
+[toolfault] 25/624 episodes, $0.000 metered
+[toolfault] 50/624 episodes, $0.000 metered
+[toolfault] 75/624 episodes, $0.000 metered
+[toolfault] 100/624 episodes, $0.000 metered
+[toolfault] 125/624 episodes, $0.000 metered
+[toolfault] 150/624 episodes, $0.000 metered
+[toolfault] 175/624 episodes, $0.000 metered
+[toolfault] 200/624 episodes, $0.000 metered
+[toolfault] 225/624 episodes, $0.000 metered
+[toolfault] 250/624 episodes, $0.000 metered
+[toolfault] 275/624 episodes, $0.000 metered
+[toolfault] 300/624 episodes, $0.000 metered
+[toolfault] 325/624 episodes, $0.000 metered
+[toolfault] 350/624 episodes, $0.000 metered
+[toolfault] 375/624 episodes, $0.000 metered
+[toolfault] 400/624 episodes, $0.000 metered
+[toolfault] 425/624 episodes, $0.000 metered
+[toolfault] 450/624 episodes, $0.000 metered
+[toolfault] 475/624 episodes, $0.000 metered
+[toolfault] 500/624 episodes, $0.000 metered
+[toolfault] 525/624 episodes, $0.000 metered
+[toolfault] 550/624 episodes, $0.000 metered
+[toolfault] 575/624 episodes, $0.000 metered
+[toolfault] 600/624 episodes, $0.000 metered
+[toolfault] wrote 624 episodes to results/posttrain-20261114-tuned/episodes.jsonl, spent $0.000
+{
+  "manifest": {
+    "run_id": "posttrain-20261114-tuned",
+    "world_seed": 7,
+    "task_seed": 11,
+    "tasks_per_type": 16,
+    "tasks": 64,
+    "repeats": 1,
+    "max_tool_calls": 18,
+    "conditions": [
+      "clean",
+      "timeout",
+      "http_500",
+      "rate_limit",
+      "malformed_json",
+      "schema_drift",
+      "auth_expired",
+      "empty_result",
+      "stale_record",
+      "truncated_list",
+      "wrong_entity",
+      "contradiction",
+      "unit_shift",
+      "injected_instruction"
+    ],
+    "task_types": [
+      "verify_entity",
+      "ubo_chain",
+      "revenue_eur",
+      "sanctions_screen"
+    ],
+    "episodes_planned": 624,
+    "episodes_completed": 624,
+    "episodes_with_errors": 0,
+    "harness_exceptions": 0,
+    "budget_usd": 0,
+    "spent_usd": 0.0,
+    "spend_by_model": {
+      "tuned": 0.0
+    },
+    "model_calls": 3098,
+    "stopped_on_budget": false,
+    "prices_usd_per_million": {},
+    "agents": [
+      {
+        "label": "posttrain-20261114-tuned",
+        "kind": "local",
+        "model": "tuned",
+        "temperature": 0.0,
+        "max_output_tokens": 4000,
+        "seed": 20260801,
+        "price_usd_per_million": null
+      }
+    ]
+  },
+  "report": "results/posttrain-20261114-tuned/REPORT.md"
+}
+=== stage tuned exit 0 at 2026-11-14T14:47:03Z ===

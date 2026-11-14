@@ -14,6 +14,7 @@ loudly if there is not one, rather than silently training on everything.
 from __future__ import annotations
 
 import argparse
+import inspect
 import json
 import os
 import sys
@@ -123,12 +124,20 @@ def main() -> int:
         ],
     )
 
+    # transformers 5.23.0 with trl 1.18.0 rejects warmup_ratio. There warmup_steps takes a
+    # float below 1 as a ratio. On older releases that still accept warmup_ratio, warmup_steps
+    # is an integer step count, so the argument is chosen from the installed signature.
+    if "warmup_ratio" in inspect.signature(SFTConfig.__init__).parameters:
+        warmup = {"warmup_ratio": 0.03}
+    else:
+        warmup = {"warmup_steps": 0.03}
+
     config = SFTConfig(
         output_dir=args.output_dir,
         num_train_epochs=args.epochs,
         learning_rate=args.lr,
         lr_scheduler_type="cosine",
-        warmup_ratio=0.03,
+        **warmup,
         per_device_train_batch_size=args.batch_size,
         per_device_eval_batch_size=args.batch_size,
         gradient_accumulation_steps=args.grad_accum,

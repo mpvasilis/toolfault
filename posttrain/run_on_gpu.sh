@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env bash
+#!/usr/bin/env bash
 # The whole post-training experiment, start to finish, on one rented GPU box.
 #
 #   base model  -> serve -> evaluate on the benchmark

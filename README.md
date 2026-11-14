@@ -21,13 +21,13 @@ that error into its final answer.
 Recovery, calibration and escalation therefore need to be measured together. ToolFault asks
 four questions.
 
-1. **Recovery** — How does task resolution change under explicit errors, silent data corruption
+1. **Recovery.** How does task resolution change under explicit errors, silent data corruption
    and instructions embedded in tool output?
-2. **Confidence** — Does stated confidence distinguish correct from incorrect submissions
+2. **Confidence.** Does stated confidence distinguish correct from incorrect submissions
    within each fault family?
-3. **Escalation** — How many unsafe submissions would a confidence threshold divert, and how
+3. **Escalation.** How many unsafe submissions would a confidence threshold divert, and how
    many additional episodes would require human review?
-4. **Verification** — How far do single-source policies fall below a policy that reconciles
+4. **Verification.** How far do single-source policies fall below a policy that reconciles
    the available evidence?
 
 Clean and faulted episodes share the same task. Faults have specified recovery paths. A scripted
@@ -77,7 +77,7 @@ caused by trusting either source alone.
 | Flagging | At least one data-quality flag reported, with clean episodes measuring false positives |
 | ECE and Brier score | Calibration of stated confidence against answer correctness |
 | Confidence AUROC | Ranking of correct versus incorrect submissions |
-| Risk–coverage | Answer error rate at achievable confidence thresholds, keeping tied scores together |
+| Risk-coverage | Answer error rate at achievable confidence thresholds, keeping tied scores together |
 | Routing simulation | Accepted submissions, human referrals, unfinished episodes and accepted unsafe submissions |
 
 Calibration uses submitted answers with valid confidence. Routing rates use all scorable episodes
@@ -85,7 +85,7 @@ in each slice, including the agent's existing escalations. Correctness and safet
 when a numerically correct answer was submitted without sufficient evidence.
 
 Per-condition comparisons are paired by task and use sign-flip permutation tests with
-Benjamini–Hochberg correction. Wilson intervals on pooled episode rates are descriptive because
+Benjamini-Hochberg correction. Wilson intervals on pooled episode rates are descriptive because
 several episodes share a task. The confidence audit also reports task-cluster bootstrap intervals.
 Repeated runs carry explicit repeat IDs for measuring consistency.
 [Metric definitions and routing analysis](docs/confidence-routing.md)
@@ -121,8 +121,8 @@ For GPT-OSS-20B, a retrospective threshold of 0.95 reduces accepted unsafe submi
 Qwen3-235B-A22B, it increases referrals from 56.2% to 60.7%, with the unsafe rate still at 8.0%.
 
 The confidence AUROC for GPT-OSS-120B is 0.234, with a task-bootstrap 95% interval of
-0.101–0.363. Qwen3-235B-A22B and Kimi K2 have intervals that include 0.5. GPT-OSS-20B has
-an interval of 0.500–0.758. These estimates are conditional on submissions in one world.
+0.101 to 0.363. Qwen3-235B-A22B and Kimi K2 have intervals that include 0.5. GPT-OSS-20B has
+an interval of 0.500 to 0.758. These estimates are conditional on submissions in one world.
 The routing simulation estimates review volume. Human review time and quality remain unmeasured.
 [Audit results and confidence intervals](results/audit-2026-11-11/AUDIT.md)
 
@@ -133,6 +133,24 @@ An additional offline experiment runs three scripted policies across world seeds
 The single-source policies have silent-fault unsafe rates between **50.9% and 56.0%** across
 these worlds. This tests the benchmark controls across generated registries.
 [Machine-readable experiment results](results/audit-2026-11-11/audit.json)
+
+### Fine-tuning on reference traces
+
+A QLoRA adapter for Qwen3-4B-Instruct was trained on 765 demonstrations from the `oracle`
+policy and compared with its base on the same 624 episodes. Six fault types were excluded
+from training.
+
+| Conditions | Base resolved | Tuned resolved | Base unsafe | Tuned unsafe |
+|---|---:|---:|---:|---:|
+| Trained (8, clean included) | 55.4% | 100.0% | 15.8% | 0.0% |
+| Held out (6) | 53.5% | 65.2% | 21.1% | 28.5% |
+
+Cross-checking carried over to two silent faults the adapter never saw: `unit_shift` rose
+from 25.0% to 87.5% and `stale_record` from 25.0% to 68.8%. Retry and escalation stayed tied
+to the triggers in the demonstrations. `rate_limit` fell from 62.5% to 40.6%, and unsafe
+submissions under prompt injection rose from 6.2% to 26.6%. This is one training seed in one
+world.
+[Protocol, per-fault results and traces](posttrain/README.md)
 
 ## Reproduce
 
@@ -182,9 +200,9 @@ The scorer checks the final decision and records quality flags. Evidence citatio
 validated, and flags are a proxy for detection. Human-review outcomes and compound-fault
 interactions require further experiments.
 
-The post-training experiment has a reproducible dataset and a CPU-validated assistant-token mask.
-Base–tuned model results remain pending.
-[Post-training protocol](posttrain/README.md)
+The post-training experiment has one completed run, with one model, one training seed and one
+evaluation world.
+[Post-training protocol and results](posttrain/README.md)
 
 ## Documentation
 
@@ -194,7 +212,7 @@ Base–tuned model results remain pending.
 - [Scripted and degenerate baselines](docs/not-gameable.md)
 - [Prompt-injection case study](docs/postmortem-silent-tool-failure.md)
 - [Agent design considerations](docs/production-agents.md)
-- [Post-training protocol](posttrain/README.md)
+- [Post-training protocol and results](posttrain/README.md)
 
 Source modules separate world generation, tasks, tools, fault injection, episode execution,
 scoring and statistics under [`src/toolfault/`](src/toolfault/).
