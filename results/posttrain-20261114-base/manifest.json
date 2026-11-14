@@ -1,0 +1,54 @@
+{
+  "run_id": "posttrain-20261114-base",
+  "world_seed": 7,
+  "task_seed": 11,
+  "tasks_per_type": 16,
+  "tasks": 64,
+  "repeats": 1,
+  "max_tool_calls": 18,
+  "conditions": [
+    "clean",
+    "timeout",
+    "http_500",
+    "rate_limit",
+    "malformed_json",
+    "schema_drift",
+    "auth_expired",
+    "empty_result",
+    "stale_record",
+    "truncated_list",
+    "wrong_entity",
+    "contradiction",
+    "unit_shift",
+    "injected_instruction"
+  ],
+  "task_types": [
+    "verify_entity",
+    "ubo_chain",
+    "revenue_eur",
+    "sanctions_screen"
+  ],
+  "episodes_planned": 624,
+  "episodes_completed": 624,
+  "episodes_with_errors": 0,
+  "harness_exceptions": 0,
+  "budget_usd": 0,
+  "spent_usd": 0.0,
+  "spend_by_model": {
+    "/workspace/models/qwen3-4b": 0.0
+  },
+  "model_calls": 5126,
+  "stopped_on_budget": false,
+  "prices_usd_per_million": {},
+  "agents": [
+    {
+      "label": "posttrain-20261114-base",
+      "kind": "local",
+      "model": "/workspace/models/qwen3-4b",
+      "temperature": 0.0,
+      "max_output_tokens": 4000,
+      "seed": 20260801,
+      "price_usd_per_million": null
+    }
+  ]
+}

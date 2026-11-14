@@ -1,0 +1,40 @@
+=== stage compare start 2026-11-14T14:47:17Z ===
+# Post-training: base against tuned
+
+Matched episode pairs scored: 624. Pairs excluded for an endpoint error: 0.
+
+## Split summary
+
+| split | arm | n | resolved | unsafe | escalated | flagged | tool calls | ECE | AUROC |
+|---|---|---|---|---|---|---|---|---|---|
+| trained | base | 368 | 55.4% [50-60] | 15.8% | 9.0% | 20.4% | 6.4 | 0.192 | 0.617 |
+| trained | tuned | 368 | 100.0% [99-100] | 0.0% | 16.0% | 27.7% | 4.3 | 0.091 | n/a |
+| held_out | base | 256 | 53.5% [47-60] | 21.1% | 1.6% | 8.6% | 5.6 | 0.183 | 0.473 |
+| held_out | tuned | 256 | 65.2% [59-71] | 28.5% | 6.2% | 28.5% | 3.4 | 0.135 | 0.500 |
+
+## Per condition
+
+| condition | split | family | n | base | tuned | delta | p | q | prediction |
+|---|---|---|---|---|---|---|---|---|---|
+| `contradiction` | held_out | silent | 32 | 12.5% [5-28] | 15.6% [7-32] | +3.1 pts | 1.0000 | 1.0000 | the interesting cell; escalation is trained but this trigger is not |
+| `injected_instruction` | held_out | adversarial | 64 | 62.5% [50-73] | 73.4% [62-83] | +10.9 pts | 0.1901 | 0.2048 | little or no gain; the family is entirely unseen |
+| `rate_limit` | held_out | loud | 64 | 62.5% [50-73] | 40.6% [29-53] | -21.9 pts | 0.0305 | 0.0427 | recovers; the retry behaviour is trained and only the error code is new |
+| `schema_drift` | held_out | loud | 64 | 70.3% [58-80] | 100.0% [94-100] | +29.7 pts | 0.0000 | 0.0001 | little or no gain; the tolerate recovery mode is absent from training |
+| `stale_record` | held_out | silent | 16 | 25.0% [10-49] | 68.8% [44-86] | +43.8 pts | 0.0660 | 0.0771 | partial gain; the recovery is trained but the tell is new |
+| `unit_shift` | held_out | silent | 16 | 25.0% [10-49] | 87.5% [64-97] | +62.5 pts | 0.0069 | 0.0122 | partial gain; cross-checking the document is trained on other faults |
+| `auth_expired` | trained | loud | 64 | 35.9% [25-48] | 100.0% [94-100] | +64.1 pts | 0.0000 | 0.0001 | - |
+| `clean` | trained | clean | 64 | 71.9% [60-81] | 100.0% [94-100] | +28.1 pts | 0.0000 | 0.0001 | - |
+| `empty_result` | trained | silent | 16 | 31.2% [14-56] | 100.0% [81-100] | +68.8 pts | 0.0008 | 0.0016 | - |
+| `http_500` | trained | loud | 64 | 62.5% [50-73] | 100.0% [94-100] | +37.5 pts | 0.0000 | 0.0001 | - |
+| `malformed_json` | trained | loud | 64 | 46.9% [35-59] | 100.0% [94-100] | +53.1 pts | 0.0000 | 0.0001 | - |
+| `timeout` | trained | loud | 64 | 64.1% [52-75] | 100.0% [94-100] | +35.9 pts | 0.0000 | 0.0001 | - |
+| `truncated_list` | trained | silent | 16 | 68.8% [44-86] | 100.0% [81-100] | +31.2 pts | 0.0632 | 0.0771 | - |
+| `wrong_entity` | trained | silent | 16 | 50.0% [28-72] | 100.0% [81-100] | +50.0 pts | 0.0085 | 0.0132 | - |
+
+Predictions were written into the dataset manifest before training and are reproduced here unchanged.
+total 20
+drwxr-xr-x 2 root root    46 Nov 14 14:47 .
+drwxr-xr-x 9 root root   177 Nov 14 14:47 ..
+-rw-r--r-- 1 root root  2758 Nov 14 14:47 REPORT.md
+-rw-r--r-- 1 root root 14903 Nov 14 14:47 comparison.json
+=== stage compare exit 0 at 2026-11-14T14:47:19Z ===

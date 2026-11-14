@@ -1,0 +1,17 @@
+run_id: posttrain-20261114-tuned
+world_seed: 7
+task_seed: 11
+tasks_per_type: 16
+repeats: 1
+max_tool_calls: 18
+budget_usd: 0   # self-hosted inference is not metered
+workers: 8
+save_traces: failures
+trace_sample: 0.2
+out_dir: results
+agents:
+  - kind: local
+    model: tuned
+    base_url: http://127.0.0.1:8000/v1
+    api_key_env: LOCAL_API_KEY
+    label: posttrain-20261114-tuned

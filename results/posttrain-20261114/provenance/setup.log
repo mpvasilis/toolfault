@@ -1,0 +1,175 @@
+=== stage setup start 2026-11-14T12:55:19Z ===
+NVIDIA GeForce RTX 3090, 24576 MiB, 615.71.09
+overlay          70G   24M   70G   1% /
+--- serving environment, as shipped ---
+/usr/local/bin/vllm
+vllm 0.33.0 torch 2.14.0+cu130 cuda 13.0 True
+Cloning into '/workspace/toolfault'...
+toolfault commit: 89cb54d455c13d13efa81ef83cc2b25f9b9671fb
+--- training venv ---
+Using CPython 3.12.3 interpreter at: /usr/bin/python3.12
+Creating virtual environment at: train-venv
+Activate with: source train-venv/bin/activate
+Using Python 3.12.3 environment at: train-venv
+Resolved 73 packages in 958ms
+Downloading pygments (1.2MiB)
+Downloading hf-xet (4.1MiB)
+Downloading sympy (6.0MiB)
+Downloading pandas (11.5MiB)
+Downloading networkx (2.0MiB)
+Downloading numpy (16.0MiB)
+Downloading pydantic-core (2.2MiB)
+Downloading nvidia-nvshmem-cu13 (129.1MiB)
+Downloading nvidia-nccl-cu13 (240.7MiB)
+Downloading pyarrow (52.5MiB)
+Downloading cuda-bindings (8.0MiB)
+Downloading nvidia-cublas (386.1MiB)
+Downloading nvidia-cusparselt-cu13 (162.3MiB)
+Downloading nvidia-cuda-cccl (3.9MiB)
+Downloading nvidia-cuda-nvrtc (44.8MiB)
+Downloading nvidia-cufile (1.3MiB)
+Downloading transformers (12.7MiB)
+Downloading nvidia-cuda-runtime (2.2MiB)
+Downloading bitsandbytes (41.1MiB)
+Downloading nvidia-cufft (208.1MiB)
+Downloading nvidia-cusparse (144.0MiB)
+Downloading nvidia-nvjitlink (44.5MiB)
+Downloading tokenizers (3.2MiB)
+Downloading trl (1.0MiB)
+Downloading nvidia-cusolver (217.4MiB)
+Downloading triton (272.4MiB)
+Downloading torch (514.2MiB)
+Downloading nvidia-cudnn-cu13 (495.1MiB)
+Downloading nvidia-cuda-cupti (11.4MiB)
+ Downloaded trl
+ Downloaded pygments
+ Downloaded nvidia-cufile
+ Downloaded networkx
+ Downloaded pydantic-core
+ Downloaded nvidia-cuda-runtime
+ Downloaded tokenizers
+ Downloaded nvidia-cuda-cccl
+ Downloaded hf-xet
+ Downloaded sympy
+ Downloaded cuda-bindings
+ Downloaded pandas
+ Downloaded nvidia-cuda-cupti
+ Downloaded transformers
+ Downloaded numpy
+ Downloaded bitsandbytes
+ Downloaded nvidia-nvjitlink
+ Downloaded nvidia-cuda-nvrtc
+ Downloaded pyarrow
+ Downloaded nvidia-nvshmem-cu13
+ Downloaded nvidia-cusparse
+ Downloaded nvidia-cusparselt-cu13
+ Downloaded nvidia-cufft
+ Downloaded nvidia-cusolver
+ Downloaded nvidia-nccl-cu13
+ Downloaded triton
+ Downloaded nvidia-cublas
+ Downloaded nvidia-cudnn-cu13
+ Downloaded torch
+Prepared 73 packages in 34.52s
+Installed 73 packages in 2.08s
+Bytecode compiled 12084 files in 6.31s
+ + accelerate==1.15.0
+ + annotated-doc==0.0.6
+ + annotated-types==0.8.0
+ + anyio==4.16.0
+ + bitsandbytes==0.50.2
+ + certifi==2026.10.23
+ + click==8.5.1
+ + cuda-bindings==13.5.0
+ + cuda-pathfinder==1.9.0
+ + cuda-toolkit==13.2.2
+ + datasets==5.2.0
+ + dill==0.4.1
+ + filelock==4.2.10
+ + fsspec==2026.9.0
+ + h11==0.16.0
+ + hf-xet==1.8.0
+ + httpcore==1.0.9
+ + httpcore2==2.16.0
+ + httpx==0.28.1
+ + httpx2==2.16.0
+ + huggingface-hub==2.4.0
+ + idna==3.20
+ + jinja2==3.1.6
+ + markdown-it-py==4.3.0
+ + markupsafe==3.0.4
+ + mdurl==0.1.2
+ + mpmath==1.3.0
+ + multiprocess==0.70.19
+ + networkx==3.7
+ + numpy==2.5.4
+ + nvidia-cublas==13.4.1.3
+ + nvidia-cuda-cccl==13.3.5.0.6
+ + nvidia-cuda-cupti==13.2.86
+ + nvidia-cuda-nvrtc==13.2.86
+ + nvidia-cuda-runtime==13.2.86
+ + nvidia-cudnn-cu13==9.26.0.51
+ + nvidia-cufft==12.2.0.57
+ + nvidia-cufile==1.17.1.22
+ + nvidia-cusolver==12.2.0.11
+ + nvidia-cusparse==12.7.10.12
+ + nvidia-cusparselt-cu13==0.8.1
+ + nvidia-nccl-cu13==2.31.2
+ + nvidia-nvjitlink==13.5.37
+ + nvidia-nvshmem-cu13==3.7.2
+ + nvidia-nvtx==13.2.86
+ + packaging==26.3
+ + pandas==3.1.1
+ + peft==0.21.3
+ + psutil==7.2.2
+ + pyarrow==26.0.1
+ + pydantic==2.14.3
+ + pydantic-core==2.50.4
+ + pygments==2.21.0
+ + python-dateutil==4.0.0
+ + pyyaml==6.0.3
+ + regex==2026.11.9
+ + rich==15.0.0
+ + safetensors==0.8.0
+ + setuptools==84.2.1
+ + shellingham==1.5.4
+ + sympy==1.14.0
+ + tokenizers==0.23.3
+ + torch==2.15.0
+ + tqdm==4.70.1
+ + transformers==5.23.0
+ + triton==3.9.0
+ + trl==1.18.0
+ + truststore==0.10.5
+ + typer==0.29.1
+ + typing-extensions==4.16.0
+ + typing-inspection==0.4.5
+ + tzdata==2026.6
+ + xxhash==4.1.0
+Using Python 3.12.3 environment at: train-venv
+Resolved 9 packages in 9ms
+   Building toolfault @ file:///workspace/toolfault
+      Built toolfault @ file:///workspace/toolfault
+Prepared 1 package in 880ms
+Installed 1 package in 5ms
+ + toolfault==0.1.0 (from file:///workspace/toolfault)
+train env: torch 2.15.0+cu132 cuda 13.2 True
+transformers 5.23.0 trl 1.18.0 peft 0.21.3 bitsandbytes 0.50.2 datasets 5.2.0 accelerate 1.15.0
+Using Python 3.12.3 environment at: train-venv
+--- model ---
+[fetch] attempt 1
+Fetching 10 files:   0%|          | 0/10 [00:00<?, ?it/s]Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Fetching 10 files:  10%|█         | 1/10 [00:00<00:01,  6.84it/s]Fetching 10 files:  20%|██        | 2/10 [00:00<00:00,  8.26it/s]Fetching 10 files:  40%|████      | 4/10 [01:30<02:49, 28.29s/it]Fetching 10 files:  50%|█████     | 5/10 [01:31<01:40, 20.01s/it]Fetching 10 files:  60%|██████    | 6/10 [01:32<00:55, 13.92s/it]Fetching 10 files:  70%|███████   | 7/10 [01:32<00:29,  9.89s/it]Fetching 10 files:  80%|████████  | 8/10 [01:32<00:13,  6.94s/it]Fetching 10 files: 100%|██████████| 10/10 [01:33<00:00,  3.78s/it]Fetching 10 files: 100%|██████████| 10/10 [01:33<00:00,  9.31s/it]
+hf ok
+7.6G	/workspace/models/qwen3-4b
+config.json
+generation_config.json
+merges.txt
+model-00001-of-00003.safetensors
+model-00002-of-00003.safetensors
+model-00003-of-00003.safetensors
+model.safetensors.index.json
+tokenizer.json
+tokenizer_config.json
+vocab.json
+=== stage setup exit 0 at 2026-11-14T12:57:53Z ===
