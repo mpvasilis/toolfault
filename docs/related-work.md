@@ -89,6 +89,6 @@ worlds validates the environment and reference policies, but does not establish 
 generalisation across worlds. Priorities for extending the evidence are model reruns on
 independent world seeds, repeated attempts on matched tasks, thresholds selected on a
 separate calibration split, and held-out fault evaluations. The
-[post-training experiment](../posttrain/README.md) provides a training and evaluation path.
-Its dataset and preprocessing checks should be distinguished from completed training or
-measured improvements in a trained model.
+[post-training experiment](../posttrain/README.md) covers the last of these with one completed
+run: a QLoRA adapter for Qwen3-4B-Instruct evaluated against its base on six fault types
+excluded from training. That run is a single training seed in the same world as the model grid.
